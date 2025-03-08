@@ -1,32 +1,22 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import SignIn from "../login/auth/signin";
+import Contact from "../external/page";
+import HeaderNavbar from "../../components/Header";
 
 const HomePage = () => {
     return (
-        <div className="bg-gray-100 min-h-screen">
-            {/* Navbar */}
-            <nav className="bg-blue-600 text-white p-4">
-                <div className="max-w-6xl mx-auto flex justify-between items-center">
-                    <h1 className="text-2xl font-bold">The Green Team</h1>
-                    <ul className="flex space-x-6">
-                        <li className="hover:text-gray-300 cursor-pointer">Home</li>
-                        <li className="hover:text-gray-300 cursor-pointer">About</li>
-                        <li className="hover:text-gray-300 cursor-pointer">Services</li>
-                        <li className="hover:text-gray-300 cursor-pointer">Contact</li>
+        <div className="bg-gray-100 min-h-screen pt-17">
 
-                    </ul>
-                </div>
-            </nav>
 
             {/* Hero Section */}
-            <header className="text-center py-20 bg-blue-500 text-white">
+            <header className="text-center py-20 bg-green-500 text-white">
                 <h2 className="text-4xl font-bold">Welcome to The Green Team</h2>
                 <p className="text-lg mt-4">Environmental Conservation Volunteering For Young People Aged 12-18</p>
                 <Link to='/signin'>
-                <button className="mt-6 px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg shadow-md hover:bg-gray-200 transition">
-                    Get Started
-                </button>
+                    <button className="mt-6 px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg shadow-md hover:bg-gray-200 transition">
+                        Get Started
+                    </button>
                 </Link>
             </header>
 
@@ -49,10 +39,7 @@ const HomePage = () => {
                 </div>
             </section>
 
-            {/* Footer */}
-            <footer className="bg-gray-800 text-white text-center py-4">
-                <p>© 2025 MyWebsite. All rights reserved.</p>
-            </footer>
+
         </div >
     );
 };

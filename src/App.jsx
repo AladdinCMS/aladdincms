@@ -17,13 +17,28 @@ import VolunteersPage from './pages/admin/pages/volunteers/page'
 import SignIn from "./pages/login/auth/signin.jsx";
 import SignUp from "./pages/login/auth/signup.jsx";
 
+
+import HomePage from "./pages/home/home.jsx";
+import HeaderNavbar from "./components/Header.jsx";
+
+import Volunteer from "./pages/volunteer/volunteer";
+import Contact from "./pages/external/page";
+import Footer from "./components/Footer";
+
+
+
 function App() {
   // In a real app, you would check for auth status from your auth context/provider
   // For the hackathon, let's just redirect to the auth page when accessing admin routes
   return (
     <>
       <main>
+
+
+        <HeaderNavbar />
+
         <Router> {/* Using Router as imported */}
+
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/signin" element={<SignIn />} />
