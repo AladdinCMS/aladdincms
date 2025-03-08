@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { CalendarIcon, Upload } from "lucide-react";
 
@@ -89,7 +87,7 @@ export default function Volunteer() {
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <CalendarIcon className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
+                {/* <CalendarIcon className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" /> */}
               </div>
               <p className="text-xs text-gray-500 mt-1">
                 For age verification purposes
@@ -253,7 +251,7 @@ export default function Volunteer() {
                   htmlFor="zipCode"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Zip Code <span className="text-red-500">*</span>
+                  Postal Code <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -337,7 +335,7 @@ export default function Volunteer() {
         <div className="pt-4">
           <button
             type="submit"
-            className="w-full md:w-auto px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+            className="w-full md:w-auto px-6 py-3 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
           >
             Submit Registration
           </button>
