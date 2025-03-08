@@ -1,8 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
+
 import ImageSlider from "../../components/Slider";
-
-
 
 const HomePage = () => {
     const images = ['https://dlaqljgi7pm30.cloudfront.net/attachments/xujquwqc3zvk/78z9smp14tkq/processed/ewe3166ec17e/alt_ratio_16x9_1x_Green_Vols_Teamworking__1_.jpg?v=20230330124017',
@@ -36,20 +35,7 @@ const HomePage = () => {
                 <ImageSlider />
 
 
-                {/* <div className="mt-10 grid md:grid-cols-3 gap-8">
-                    <div className="bg-white p-6 rounded-lg shadow-md text-center">
-                        <h4 className="text-xl font-bold">Fast Performance</h4>
-                        <p className="mt-2 text-gray-600">Optimized for speed and efficiency.</p>
-                    </div>
-                    <div className="bg-white p-6 rounded-lg shadow-md text-center">
-                        <h4 className="text-xl font-bold">Responsive Design</h4>
-                        <p className="mt-2 text-gray-600">Looks great on all devices.</p>
-                    </div>
-                    <div className="bg-white p-6 rounded-lg shadow-md text-center">
-                        <h4 className="text-xl font-bold">Easy to Use</h4>
-                        <p className="mt-2 text-gray-600">Simple and user-friendly interface.</p>
-                    </div>
-                </div> */}
+
             </section>
 
 

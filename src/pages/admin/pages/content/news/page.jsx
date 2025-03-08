@@ -6,6 +6,8 @@ const NewsPage = () => {
   const [showEditor, setShowEditor] = useState(false)
   const [editingItem, setEditingItem] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState('All Categories')
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
+  const [articleToDelete, setArticleToDelete] = useState(null)
   
   // Categories as specified
   const categories = [
@@ -28,8 +30,8 @@ const NewsPage = () => {
     'Volunteering'
   ]
   
-  // Sample news data with updated categories
-  const newsArticles = [
+  // Sample news data with updated categories and images
+  const [newsArticles, setNewsArticles] = useState([
     { 
       id: 1, 
       title: 'Sustainability Initiative Launch', 
@@ -37,7 +39,8 @@ const NewsPage = () => {
       category: 'Environment',
       date: '2025-03-02',
       lastModified: 'Mar 2, 2025',
-      content: 'The Green Team is proud to announce our new sustainability initiative aimed at reducing carbon footprint in our community. This program will focus on education and practical steps for individuals and businesses.' 
+      content: 'The Green Team is proud to announce our new sustainability initiative aimed at reducing carbon footprint in our community. This program will focus on education and practical steps for individuals and businesses.',
+      image: '/api/placeholder/800/400'
     },
     { 
       id: 3, 
@@ -46,7 +49,8 @@ const NewsPage = () => {
       category: 'Events',
       date: '2025-02-28',
       lastModified: 'Feb 28, 2025',
-      content: 'Join us for our annual Earth Day celebration with activities for all ages, environmental workshops, and local food vendors. The event will take place at City Park from 10am to 4pm.' 
+      content: 'Join us for our annual Earth Day celebration with activities for all ages, environmental workshops, and local food vendors. The event will take place at City Park from 10am to 4pm.',
+      image: '/api/placeholder/800/400'
     },
     { 
       id: 5, 
@@ -55,7 +59,8 @@ const NewsPage = () => {
       category: 'Community',
       date: '2025-02-20',
       lastModified: 'Feb 20, 2025',
-      content: 'We are excited to announce the development of a new green space in the downtown area. This project will transform an unused lot into a community garden and recreational area.' 
+      content: 'We are excited to announce the development of a new green space in the downtown area. This project will transform an unused lot into a community garden and recreational area.',
+      image: null
     },
     { 
       id: 6, 
@@ -64,7 +69,8 @@ const NewsPage = () => {
       category: 'Awards',
       date: '2025-02-15',
       lastModified: 'Feb 15, 2025',
-      content: 'We are pleased to announce our annual Volunteer Recognition Awards ceremony taking place next month. Join us as we celebrate the dedicated individuals who have contributed to our mission.' 
+      content: 'We are pleased to announce our annual Volunteer Recognition Awards ceremony taking place next month. Join us as we celebrate the dedicated individuals who have contributed to our mission.',
+      image: '/api/placeholder/800/400'
     },
     { 
       id: 7, 
@@ -73,9 +79,10 @@ const NewsPage = () => {
       category: 'DofE',
       date: '2025-02-10',
       lastModified: 'Feb 10, 2025',
-      content: 'Interested in the Duke of Edinburgh Award program? Attend our information session to learn about the requirements, benefits, and how to register for this prestigious youth development program.' 
+      content: 'Interested in the Duke of Edinburgh Award program? Attend our information session to learn about the requirements, benefits, and how to register for this prestigious youth development program.',
+      image: null
     }
-  ]
+  ]);
 
   // Filter articles based on selected category
   const filteredArticles = selectedCategory === 'All Categories' 
@@ -87,9 +94,45 @@ const NewsPage = () => {
     setShowEditor(true)
   }
 
+  const handleDeleteClick = (article) => {
+    setArticleToDelete(article)
+    setShowDeleteConfirmation(true)
+  }
+
+  const confirmDelete = () => {
+    if (articleToDelete) {
+      setNewsArticles(prev => prev.filter(article => article.id !== articleToDelete.id))
+      setShowDeleteConfirmation(false)
+      setArticleToDelete(null)
+    }
+  }
+
+  const cancelDelete = () => {
+    setShowDeleteConfirmation(false)
+    setArticleToDelete(null)
+  }
+
   const handleSave = (data) => {
-    console.log('Saving news article:', data)
-    // Here you would normally save to a database
+    const updatedData = {
+      ...data,
+      lastModified: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    };
+    
+    if (data.id) {
+      // Update existing article
+      setNewsArticles(prev => prev.map(article => 
+        article.id === data.id ? updatedData : article
+      ));
+    } else {
+      // Create new article
+      const newArticle = {
+        ...updatedData,
+        id: Math.max(...newsArticles.map(a => a.id)) + 1,
+        type: 'news'
+      };
+      setNewsArticles(prev => [...prev, newArticle]);
+    }
+    
     setShowEditor(false)
     setEditingItem(null)
   }
@@ -177,13 +220,16 @@ const NewsPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredArticles.length > 0 ? (
             filteredArticles.map((item) => (
-              <div key={item.id} onClick={() => handleEditClick(item)} className="cursor-pointer">
+              <div key={item.id}>
                 <ContentCard
                   title={item.title}
                   type={item.type}
                   lastModified={item.lastModified}
                   category={item.category}
                   details={item.content.substring(0, 100) + '...'}
+                  image={item.image}
+                  onEdit={() => handleEditClick(item)}
+                  onDelete={() => handleDeleteClick(item)}
                 />
               </div>
             ))
@@ -192,6 +238,32 @@ const NewsPage = () => {
               No articles found in this category.
             </div>
           )}
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirmation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md mx-4">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Delete Article</h3>
+            <p className="text-sm text-gray-500 mb-4">
+              Are you sure you want to delete "{articleToDelete?.title}"? This action cannot be undone.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

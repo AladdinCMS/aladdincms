@@ -1,18 +1,50 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { Upload } from 'lucide-react'
 
 const NewsEditor = ({ article, onSave, onCancel, categories = [] }) => {
   const [formData, setFormData] = useState(article || {
     title: '',
     date: new Date().toISOString().split('T')[0],
     category: '',
-    content: ''
+    content: '',
+    image: null
   });
+  
+  const [imagePreview, setImagePreview] = useState(null);
+  
+  // Initialize image preview if article has an image
+  useEffect(() => {
+    if (article && article.image) {
+      setImagePreview(article.image);
+    }
+  }, [article]);
   
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+  
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const imageUrl = URL.createObjectURL(file);
+      
+      setImagePreview(imageUrl);
+      setFormData(prev => ({
+        ...prev,
+        image: imageUrl
+      }));
+    }
+  };
+  
+  const handleRemoveImage = () => {
+    setImagePreview(null);
+    setFormData(prev => ({
+      ...prev,
+      image: null
     }));
   };
   
@@ -100,6 +132,53 @@ const NewsEditor = ({ article, onSave, onCancel, categories = [] }) => {
               </>
             )}
           </select>
+        </div>
+        
+        <div className="mb-4">
+          <label htmlFor="featuredImage" className="block text-sm font-medium text-gray-700 mb-1">
+            Featured Image
+          </label>
+          <div className="mt-1 flex items-center">
+            {imagePreview ? (
+              <div className="relative">
+                <img 
+                  src={imagePreview} 
+                  alt="Featured" 
+                  className="h-40 w-auto object-cover rounded-md border border-gray-300"
+                />
+                <button
+                  type="button"
+                  onClick={handleRemoveImage}
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center">
+                <label 
+                  htmlFor="featuredImage" 
+                  className="cursor-pointer flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  Choose Image
+                </label>
+                <input
+                  type="file"
+                  id="featuredImage"
+                  name="image"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </div>
+            )}
+          </div>
+          <p className="text-xs text-gray-500 mt-1">
+            Recommended size: 1200x630 pixels
+          </p>
         </div>
         
         <div className="mb-4">

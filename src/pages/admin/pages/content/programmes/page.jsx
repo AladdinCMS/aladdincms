@@ -6,9 +6,11 @@ const ProgrammesPage = () => {
   const [showEditor, setShowEditor] = useState(false)
   const [editingItem, setEditingItem] = useState(null)
   const [locationFilter, setLocationFilter] = useState('All Locations')
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
+  const [programmeToDelete, setProgrammeToDelete] = useState(null)
   
-  // Sample programmes data based on your diagram
-  const programmes = [
+  // Sample programmes data with multiple tickets
+  const [programmes, setProgrammes] = useState([
     { 
       id: 2, 
       title: 'Summer Workshop Series', 
@@ -19,11 +21,23 @@ const ProgrammesPage = () => {
       location: 'Community Center',
       ageRange: '8-14',
       details: 'Join us for a series of workshops focused on environmental education and sustainable crafts. Children will learn about recycling, composting, and renewable energy through fun, hands-on activities.',
-      tickets: {
-        name: 'Workshop Pass',
-        price: '$25',
-        details: 'Includes all materials and a take-home project kit'
-      }
+      tickets: [
+        {
+          name: 'Standard Ticket',
+          price: '£25.00',
+          details: 'Includes all materials and a take-home project kit'
+        },
+        {
+          name: 'Low Income Household Ticket',
+          price: '£8.00',
+          details: 'Subsidized rate for families from low-income households'
+        },
+        {
+          name: 'Family Pass',
+          price: '£60.00',
+          details: 'Admits up to 3 children from the same family'
+        }
+      ]
     },
     { 
       id: 4, 
@@ -35,11 +49,18 @@ const ProgrammesPage = () => {
       location: 'City Park',
       ageRange: 'All ages',
       details: 'Participate in our community recycling competition with prizes for the most creative upcycled items and the largest amount of recycling collected.',
-      tickets: {
-        name: 'Competition Entry',
-        price: 'Free',
-        details: 'Registration required by February 20th'
-      }
+      tickets: [
+        {
+          name: 'Competition Entry',
+          price: 'Free',
+          details: 'Registration required by February 20th'
+        },
+        {
+          name: 'Team Entry',
+          price: '£5.00',
+          details: 'For groups of up to 5 people competing together'
+        }
+      ]
     },
     { 
       id: 6, 
@@ -51,13 +72,20 @@ const ProgrammesPage = () => {
       location: 'Community Garden',
       ageRange: '16+',
       details: 'Help us maintain our community garden and learn about sustainable gardening practices. Tools and refreshments will be provided.',
-      tickets: {
-        name: 'Volunteer Registration',
-        price: 'Free',
-        details: 'Limited spots available'
-      }
+      tickets: [
+        {
+          name: 'Standard Ticket',
+          price: '£16.00',
+          details: 'Place for one participant on a Green Volunteers day'
+        },
+        {
+          name: 'Low Income Household Ticket',
+          price: '£4.00',
+          details: 'Subsidized ticket for participants from low-income households'
+        }
+      ]
     }
-  ]
+  ]);
 
   // Get unique locations for filter dropdown
   const locations = ['All Locations', ...new Set(programmes.map(p => p.location))];
@@ -72,11 +100,47 @@ const ProgrammesPage = () => {
     setShowEditor(true)
   }
 
+  const handleDeleteClick = (programme) => {
+    setProgrammeToDelete(programme)
+    setShowDeleteConfirmation(true)
+  }
+
+  const confirmDelete = () => {
+    if (programmeToDelete) {
+      setProgrammes(prev => prev.filter(programme => programme.id !== programmeToDelete.id))
+      setShowDeleteConfirmation(false)
+      setProgrammeToDelete(null)
+    }
+  }
+
+  const cancelDelete = () => {
+    setShowDeleteConfirmation(false)
+    setProgrammeToDelete(null)
+  }
+
   const handleSave = (data) => {
-    console.log('Saving programme:', data)
-    // Here you would normally save to a database
-    setShowEditor(false)
-    setEditingItem(null)
+    // Check if we're updating an existing programme
+    if (data.id) {
+      setProgrammes(prev => 
+        prev.map(prog => prog.id === data.id ? { ...data, title: data.name } : prog)
+      );
+    } else {
+      // Adding a new programme
+      const newProgramme = {
+        ...data,
+        id: Math.max(...programmes.map(p => p.id)) + 1,
+        title: data.name,
+        type: 'programme',
+        lastModified: new Date().toLocaleDateString('en-US', { 
+          month: 'short', 
+          day: 'numeric', 
+          year: 'numeric' 
+        })
+      };
+      setProgrammes(prev => [...prev, newProgramme]);
+    }
+    setShowEditor(false);
+    setEditingItem(null);
   }
 
   const handleCancel = () => {
@@ -87,6 +151,17 @@ const ProgrammesPage = () => {
   const handleLocationFilterChange = (e) => {
     setLocationFilter(e.target.value)
   }
+
+  // Function to format tickets for display in content card
+  const formatTicketsForDisplay = (tickets) => {
+    if (!tickets || tickets.length === 0) return '';
+    
+    if (tickets.length === 1) {
+      return `${tickets[0].name}: ${tickets[0].price}`;
+    }
+    
+    return `${tickets.length} ticket options available`;
+  };
 
   return (
     <div>
@@ -160,12 +235,14 @@ const ProgrammesPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProgrammes.length > 0 ? (
             filteredProgrammes.map((item) => (
-              <div key={item.id} onClick={() => handleEditClick(item)} className="cursor-pointer">
+              <div key={item.id}>
                 <ContentCard
                   title={item.name}
                   type={item.type}
                   lastModified={item.lastModified}
-                  details={`${item.location} • ${item.ageRange} • ${item.details.substring(0, 80)}...`}
+                  details={`${item.location} • ${item.ageRange} • ${formatTicketsForDisplay(item.tickets)} • ${item.details.substring(0, 60)}...`}
+                  onEdit={() => handleEditClick(item)}
+                  onDelete={() => handleDeleteClick(item)}
                 />
               </div>
             ))
@@ -174,6 +251,32 @@ const ProgrammesPage = () => {
               No programmes found at this location.
             </div>
           )}
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirmation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md mx-4">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Delete Programme</h3>
+            <p className="text-sm text-gray-500 mb-4">
+              Are you sure you want to delete "{programmeToDelete?.name}"? This action cannot be undone.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
