@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -24,17 +25,26 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-white hover:text-white transition">
+                <Link
+                  href="/about"
+                  className="text-white hover:text-white transition"
+                >
                   About
                 </Link>
               </li>
               <li>
-                <Link href="/services" className="text-white hover:text-white transition">
+                <Link
+                  href="/services"
+                  className="text-white hover:text-white transition"
+                >
                   Services
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-white hover:text-white transition">
+                <Link
+                  href="/contact"
+                  className="text-white hover:text-white transition"
+                >
                   Contact
                 </Link>
               </li>
@@ -43,20 +53,40 @@ const Footer = () => {
 
           {/* Social Media */}
           <div>
-            <h3 className="text-xl font-semibold text-white">Follow Us</h3>
-            <div className="flex space-x-4 mt-3">
-              <a href="#" className="text-white hover:text-white transition">
-                <i className="fab fa-facebook-f text-xl"></i>
-              </a>
-              <a href="#" className="text-white hover:text-white transition">
-                <i className="fab fa-twitter text-xl"></i>
-              </a>
-              <a href="#" className="text-white hover:text-white transition">
-                <i className="fab fa-instagram text-xl"></i>
-              </a>
-              <a href="#" className="text-white hover:text-white transition">
-                <i className="fab fa-linkedin-in text-xl"></i>
-              </a>
+            {/* Social Media Links */}
+            <div className="">
+              <h3 className="text-xl font-semibold text-white">Follow Us</h3>
+
+              <div className="flex space-x-4 mt-4">
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-blue-600 transition-colors"
+                >
+                  <Facebook className="h-6 w-6" color="white" />
+                  <span className="sr-only">Facebook</span>
+                </a>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-blue-400 transition-colors"
+                >
+                  <Twitter className="h-6 w-6" color="white" />
+                  <span className="sr-only">Twitter</span>
+                </a>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-pink-600 transition-colors"
+                >
+                  <Instagram className="h-6 w-6" color="white" />
+                  <span className="sr-only">Instagram</span>
+                </a>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-blue-800 transition-colors"
+                >
+                  <Linkedin className="h-6 w-6" color="white" />
+                  <span className="sr-only">LinkedIn</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -64,7 +94,7 @@ const Footer = () => {
         {/* Bottom Section */}
         <div className="border-t border-gray-700 mt-8 pt-6 text-center">
           <p className="text-white">
-            &copy; {new Date().getFullYear()} MyBrand. All rights reserved.
+            &copy; {new Date().getFullYear()} GreenTeam. All rights reserved.
           </p>
         </div>
       </div>
