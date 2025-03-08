@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import SignIn from "../login/auth/signin";
-import Contact from "../external/page";
-import HeaderNavbar from "../../components/Header";
+// import SignIn from "../login/auth/signin";
+// import Contact from "../external/page";
+// import HeaderNavbar from "../../components/Header";
 
 const HomePage = () => {
     return (
