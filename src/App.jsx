@@ -1,14 +1,12 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import './App.css'
-
-// Import your existing pages
-import ExternalPage from './pages/external/page'
-import ParticipantPage from './pages/participant/page'
-import VolunteerPage from './pages/volunteer/page'
-import AuthPage from './pages/admin/auth/page'
-
+import HomePage from "./pages/home/home.jsx";
+import Volunteer from "./pages/volunteer/volunteer";
+import Contact from "./pages/external/contact/contect.jsx";
+import Footer from "./components/Footer";
 // Import CMS components
+import AuthPage from './pages/admin/auth/page'
 import CmsLayout from './pages/admin/cms'
 import Dashboard from './pages/admin/pages/dashboard/page'
 import NewsPage from './pages/admin/pages/content/news/page'
@@ -19,34 +17,23 @@ import VolunteersPage from './pages/admin/pages/volunteers/page'
 import SignIn from "./pages/login/auth/signin.jsx";
 import SignUp from "./pages/login/auth/signup.jsx";
 
-import HomePage from "./pages/home/home.jsx";
-
-import Volunteer from "./pages/volunteer/volunteer";
-import Contact from "./pages/external/contact/contect.jsx";
-import Footer from "./components/Footer";
-
 function App() {
   // In a real app, you would check for auth status from your auth context/provider
   // For the hackathon, let's just redirect to the auth page when accessing admin routes
-  
   return (
     <>
       <main>
-        <BrowserRouter>
+        <Router> {/* Using Router as imported */}
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
-
             <Route path="/volunteer" element={<Volunteer />} />
             <Route path="/contact" element={<Contact />} />
-
             {/* Auth page */}
             <Route path="/admin/auth" element={<AuthPage />} />
-            
             {/* Redirect /admin to /admin/auth */}
             <Route path="/admin" element={<Navigate to="/admin/auth" replace />} />
-            
             {/* CMS Routes - Nested under the CMS Layout */}
             <Route path="/admin" element={<CmsLayout />}>
               <Route path="dashboard" element={<Dashboard />} />
@@ -58,7 +45,7 @@ function App() {
             </Route>
           </Routes>
           <Footer />
-        </BrowserRouter>
+        </Router>
       </main>
     </>
   );
