@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import {
   Mail,
@@ -223,11 +221,10 @@ export default function Contact() {
 
             {formStatus.submitted && (
               <div
-                className={`mb-6 p-4 rounded-md ${
-                  formStatus.success
-                    ? "bg-green-50 text-green-800"
-                    : "bg-red-50 text-red-800"
-                }`}
+                className={`mb-6 p-4 rounded-md ${formStatus.success
+                  ? "bg-green-50 text-green-800"
+                  : "bg-red-50 text-red-800"
+                  }`}
               >
                 {formStatus.message}
               </div>
