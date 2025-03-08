@@ -83,7 +83,7 @@ export default function Contact() {
             <div className="space-y-6">
               <div className="flex items-start">
                 <div className="flex-shrink-0">
-                  <MapPin className="h-6 w-6 text-blue-600" />
+                  <MapPin className="h-6 w-6 text-green-600" />
                 </div>
                 <div className="ml-4">
                   <h3 className="text-lg font-medium text-gray-800">
@@ -101,7 +101,7 @@ export default function Contact() {
 
               <div className="flex items-start">
                 <div className="flex-shrink-0">
-                  <Phone className="h-6 w-6 text-blue-600" />
+                  <Phone className="h-6 w-6 text-green-600" />
                 </div>
                 <div className="ml-4">
                   <h3 className="text-lg font-medium text-gray-800">Phone</h3>
@@ -121,7 +121,7 @@ export default function Contact() {
 
               <div className="flex items-start">
                 <div className="flex-shrink-0">
-                  <Mail className="h-6 w-6 text-blue-600" />
+                  <Mail className="h-6 w-6 text-green-600" />
                 </div>
                 <div className="ml-4">
                   <h3 className="text-lg font-medium text-gray-800">Email</h3>
@@ -141,7 +141,7 @@ export default function Contact() {
 
               <div className="flex items-start">
                 <div className="flex-shrink-0">
-                  <Clock className="h-6 w-6 text-blue-600" />
+                  <Clock className="h-6 w-6 text-green-600" />
                 </div>
                 <div className="ml-4">
                   <h3 className="text-lg font-medium text-gray-800">
@@ -166,28 +166,28 @@ export default function Contact() {
                   href="#"
                   className="text-gray-600 hover:text-blue-600 transition-colors"
                 >
-                  <Facebook className="h-6 w-6" />
+                  <Facebook className="h-6 w-6 text-green-600" />
                   <span className="sr-only">Facebook</span>
                 </a>
                 <a
                   href="#"
                   className="text-gray-600 hover:text-blue-400 transition-colors"
                 >
-                  <Twitter className="h-6 w-6" />
+                  <Twitter className="h-6 w-6 text-green-600" />
                   <span className="sr-only">Twitter</span>
                 </a>
                 <a
                   href="#"
                   className="text-gray-600 hover:text-pink-600 transition-colors"
                 >
-                  <Instagram className="h-6 w-6" />
+                  <Instagram className="h-6 w-6 text-green-600" />
                   <span className="sr-only">Instagram</span>
                 </a>
                 <a
                   href="#"
                   className="text-gray-600 hover:text-blue-800 transition-colors"
                 >
-                  <Linkedin className="h-6 w-6" />
+                  <Linkedin className="h-6 w-6 text-green-600" />
                   <span className="sr-only">LinkedIn</span>
                 </a>
               </div>
@@ -335,7 +335,7 @@ export default function Contact() {
               <div>
                 <button
                   type="submit"
-                  className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                  className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
                 >
                   <Send className="mr-2 h-5 w-5" />
                   Send Message
