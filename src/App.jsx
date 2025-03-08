@@ -4,6 +4,7 @@ import SignIn from "./pages/login/auth/signin.jsx";
 import SignUp from "./pages/login/auth/signup.jsx";
 
 import HomePage from "./pages/home/home.jsx";
+import HeaderNavbar from "./components/Header.jsx";
 
 import Volunteer from "./pages/volunteer/volunteer";
 import Contact from "./pages/external/page";
@@ -14,6 +15,7 @@ function App() {
     <>
       <main>
         <BrowserRouter>
+          <HeaderNavbar />
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/signin" element={<SignIn />} />

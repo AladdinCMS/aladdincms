@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import {
   Mail,
@@ -61,7 +59,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-20">
       {/* Header Section */}
       <div className="text-center mb-16">
         <h1 className="text-4xl font-bold text-gray-800 mb-4">Contact Us</h1>
@@ -223,11 +221,10 @@ export default function Contact() {
 
             {formStatus.submitted && (
               <div
-                className={`mb-6 p-4 rounded-md ${
-                  formStatus.success
-                    ? "bg-green-50 text-green-800"
-                    : "bg-red-50 text-red-800"
-                }`}
+                className={`mb-6 p-4 rounded-md ${formStatus.success
+                  ? "bg-green-50 text-green-800"
+                  : "bg-red-50 text-red-800"
+                  }`}
               >
                 {formStatus.message}
               </div>
