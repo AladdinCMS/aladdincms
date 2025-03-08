@@ -5,6 +5,7 @@ import ProgrammeEditor from '../../../components/cms/ProgrammeEditor'
 const ProgrammesPage = () => {
   const [showEditor, setShowEditor] = useState(false)
   const [editingItem, setEditingItem] = useState(null)
+  const [locationFilter, setLocationFilter] = useState('All Locations')
   
   // Sample programmes data based on your diagram
   const programmes = [
@@ -58,6 +59,14 @@ const ProgrammesPage = () => {
     }
   ]
 
+  // Get unique locations for filter dropdown
+  const locations = ['All Locations', ...new Set(programmes.map(p => p.location))];
+
+  // Filter programmes based on location
+  const filteredProgrammes = locationFilter === 'All Locations' 
+    ? programmes 
+    : programmes.filter(programme => programme.location === locationFilter);
+
   const handleEditClick = (programme) => {
     setEditingItem(programme)
     setShowEditor(true)
@@ -68,6 +77,15 @@ const ProgrammesPage = () => {
     // Here you would normally save to a database
     setShowEditor(false)
     setEditingItem(null)
+  }
+
+  const handleCancel = () => {
+    setShowEditor(false)
+    setEditingItem(null)
+  }
+
+  const handleLocationFilterChange = (e) => {
+    setLocationFilter(e.target.value)
   }
 
   return (
@@ -93,7 +111,11 @@ const ProgrammesPage = () => {
       {/* Editor */}
       {showEditor && (
         <div className="mb-6">
-          <ProgrammeEditor programme={editingItem} onSave={handleSave} />
+          <ProgrammeEditor 
+            programme={editingItem} 
+            onSave={handleSave}
+            onCancel={handleCancel}
+          />
         </div>
       )}
 
@@ -114,11 +136,14 @@ const ProgrammesPage = () => {
               </div>
             </div>
             <div className="flex gap-2">
-              <select className="border border-gray-300 rounded-lg px-3 py-2">
-                <option>All Locations</option>
-                <option>Community Center</option>
-                <option>City Park</option>
-                <option>Community Garden</option>
+              <select 
+                className="border border-gray-300 rounded-lg px-3 py-2"
+                value={locationFilter}
+                onChange={handleLocationFilterChange}
+              >
+                {locations.map((location, index) => (
+                  <option key={index} value={location}>{location}</option>
+                ))}
               </select>
               <select className="border border-gray-300 rounded-lg px-3 py-2">
                 <option>Upcoming</option>
@@ -133,16 +158,22 @@ const ProgrammesPage = () => {
       {/* Content Grid */}
       {!showEditor && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {programmes.map((item) => (
-            <div key={item.id} onClick={() => handleEditClick(item)} className="cursor-pointer">
-              <ContentCard
-                title={item.name}
-                type={item.type}
-                lastModified={item.lastModified}
-                details={`${item.location} • ${item.ageRange} • ${item.details.substring(0, 80)}...`}
-              />
+          {filteredProgrammes.length > 0 ? (
+            filteredProgrammes.map((item) => (
+              <div key={item.id} onClick={() => handleEditClick(item)} className="cursor-pointer">
+                <ContentCard
+                  title={item.name}
+                  type={item.type}
+                  lastModified={item.lastModified}
+                  details={`${item.location} • ${item.ageRange} • ${item.details.substring(0, 80)}...`}
+                />
+              </div>
+            ))
+          ) : (
+            <div className="col-span-3 text-center py-8 text-gray-500">
+              No programmes found at this location.
             </div>
-          ))}
+          )}
         </div>
       )}
     </div>

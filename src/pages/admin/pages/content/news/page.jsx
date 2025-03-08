@@ -5,14 +5,36 @@ import NewsEditor from '../../../components/cms/NewsEditor'
 const NewsPage = () => {
   const [showEditor, setShowEditor] = useState(false)
   const [editingItem, setEditingItem] = useState(null)
+  const [selectedCategory, setSelectedCategory] = useState('All Categories')
   
-  // Sample news data based on your diagram
+  // Categories as specified
+  const categories = [
+    'Activities',
+    'Awards',
+    'Community',
+    'DofE',
+    'Environment',
+    'Events',
+    'Families',
+    'Fundraising',
+    'General',
+    'Governance',
+    'Home Education',
+    'Impact',
+    'News',
+    'Recruitment',
+    'Schools',
+    'Training',
+    'Volunteering'
+  ]
+  
+  // Sample news data with updated categories
   const newsArticles = [
     { 
       id: 1, 
       title: 'Sustainability Initiative Launch', 
       type: 'news', 
-      category: 'Community',
+      category: 'Environment',
       date: '2025-03-02',
       lastModified: 'Mar 2, 2025',
       content: 'The Green Team is proud to announce our new sustainability initiative aimed at reducing carbon footprint in our community. This program will focus on education and practical steps for individuals and businesses.' 
@@ -30,12 +52,35 @@ const NewsPage = () => {
       id: 5, 
       title: 'New Green Space Project', 
       type: 'news', 
-      category: 'Announcements',
+      category: 'Community',
       date: '2025-02-20',
       lastModified: 'Feb 20, 2025',
       content: 'We are excited to announce the development of a new green space in the downtown area. This project will transform an unused lot into a community garden and recreational area.' 
+    },
+    { 
+      id: 6, 
+      title: 'Volunteer Recognition Awards', 
+      type: 'news', 
+      category: 'Awards',
+      date: '2025-02-15',
+      lastModified: 'Feb 15, 2025',
+      content: 'We are pleased to announce our annual Volunteer Recognition Awards ceremony taking place next month. Join us as we celebrate the dedicated individuals who have contributed to our mission.' 
+    },
+    { 
+      id: 7, 
+      title: 'Duke of Edinburgh Award Information Session', 
+      type: 'news', 
+      category: 'DofE',
+      date: '2025-02-10',
+      lastModified: 'Feb 10, 2025',
+      content: 'Interested in the Duke of Edinburgh Award program? Attend our information session to learn about the requirements, benefits, and how to register for this prestigious youth development program.' 
     }
   ]
+
+  // Filter articles based on selected category
+  const filteredArticles = selectedCategory === 'All Categories' 
+    ? newsArticles 
+    : newsArticles.filter(article => article.category === selectedCategory)
 
   const handleEditClick = (article) => {
     setEditingItem(article)
@@ -47,6 +92,15 @@ const NewsPage = () => {
     // Here you would normally save to a database
     setShowEditor(false)
     setEditingItem(null)
+  }
+  
+  const handleCancel = () => {
+    setShowEditor(false)
+    setEditingItem(null)
+  }
+
+  const handleCategoryChange = (e) => {
+    setSelectedCategory(e.target.value)
   }
 
   return (
@@ -72,7 +126,12 @@ const NewsPage = () => {
       {/* Editor */}
       {showEditor && (
         <div className="mb-6">
-          <NewsEditor article={editingItem} onSave={handleSave} />
+          <NewsEditor 
+            article={editingItem} 
+            onSave={handleSave} 
+            onCancel={handleCancel}
+            categories={categories} 
+          />
         </div>
       )}
 
@@ -93,12 +152,15 @@ const NewsPage = () => {
               </div>
             </div>
             <div className="flex gap-2">
-              <select className="border border-gray-300 rounded-lg px-3 py-2">
+              <select 
+                className="border border-gray-300 rounded-lg px-3 py-2"
+                value={selectedCategory}
+                onChange={handleCategoryChange}
+              >
                 <option>All Categories</option>
-                <option>Events</option>
-                <option>Announcements</option>
-                <option>Community</option>
-                <option>Press</option>
+                {categories.map((category, index) => (
+                  <option key={index} value={category}>{category}</option>
+                ))}
               </select>
               <select className="border border-gray-300 rounded-lg px-3 py-2">
                 <option>Most Recent</option>
@@ -113,17 +175,23 @@ const NewsPage = () => {
       {/* Content Grid */}
       {!showEditor && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {newsArticles.map((item) => (
-            <div key={item.id} onClick={() => handleEditClick(item)} className="cursor-pointer">
-              <ContentCard
-                title={item.title}
-                type={item.type}
-                lastModified={item.lastModified}
-                category={item.category}
-                details={item.content.substring(0, 100) + '...'}
-              />
+          {filteredArticles.length > 0 ? (
+            filteredArticles.map((item) => (
+              <div key={item.id} onClick={() => handleEditClick(item)} className="cursor-pointer">
+                <ContentCard
+                  title={item.title}
+                  type={item.type}
+                  lastModified={item.lastModified}
+                  category={item.category}
+                  details={item.content.substring(0, 100) + '...'}
+                />
+              </div>
+            ))
+          ) : (
+            <div className="col-span-3 text-center py-8 text-gray-500">
+              No articles found in this category.
             </div>
-          ))}
+          )}
         </div>
       )}
     </div>

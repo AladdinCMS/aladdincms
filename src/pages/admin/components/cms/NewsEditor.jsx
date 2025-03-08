@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 
-const NewsEditor = ({ article, onSave }) => {
+const NewsEditor = ({ article, onSave, onCancel, categories = [] }) => {
   const [formData, setFormData] = useState(article || {
     title: '',
     date: new Date().toISOString().split('T')[0],
     category: '',
     content: ''
   });
-
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -15,12 +15,18 @@ const NewsEditor = ({ article, onSave }) => {
       [name]: value
     }));
   };
-
+  
   const handleSubmit = (e) => {
     e.preventDefault();
     onSave(formData);
   };
 
+  const handleCancel = () => {
+    if (onCancel) {
+      onCancel();
+    }
+  };
+  
   return (
     <div className="bg-white p-6 rounded-lg shadow">
       <h2 className="text-xl font-bold mb-6">{article ? 'Edit' : 'Create'} News Article</h2>
@@ -39,7 +45,7 @@ const NewsEditor = ({ article, onSave }) => {
             required
           />
         </div>
-
+        
         <div className="mb-4">
           <label htmlFor="date" className="block text-sm font-medium text-gray-700">
             Date
@@ -54,7 +60,7 @@ const NewsEditor = ({ article, onSave }) => {
             required
           />
         </div>
-
+        
         <div className="mb-4">
           <label htmlFor="category" className="block text-sm font-medium text-gray-700">
             Category
@@ -68,13 +74,34 @@ const NewsEditor = ({ article, onSave }) => {
             required
           >
             <option value="">Select a category</option>
-            <option value="Events">Events</option>
-            <option value="Announcements">Announcements</option>
-            <option value="Press">Press</option>
-            <option value="Community">Community</option>
+            {categories.length > 0 ? (
+              categories.map((category, index) => (
+                <option key={index} value={category}>{category}</option>
+              ))
+            ) : (
+              <>
+                <option value="Activities">Activities</option>
+                <option value="Awards">Awards</option>
+                <option value="Community">Community</option>
+                <option value="DofE">DofE</option>
+                <option value="Environment">Environment</option>
+                <option value="Events">Events</option>
+                <option value="Families">Families</option>
+                <option value="Fundraising">Fundraising</option>
+                <option value="General">General</option>
+                <option value="Governance">Governance</option>
+                <option value="Home Education">Home Education</option>
+                <option value="Impact">Impact</option>
+                <option value="News">News</option>
+                <option value="Recruitment">Recruitment</option>
+                <option value="Schools">Schools</option>
+                <option value="Training">Training</option>
+                <option value="Volunteering">Volunteering</option>
+              </>
+            )}
           </select>
         </div>
-
+        
         <div className="mb-4">
           <label htmlFor="content" className="block text-sm font-medium text-gray-700">
             Content
@@ -89,11 +116,12 @@ const NewsEditor = ({ article, onSave }) => {
             required
           />
         </div>
-
+        
         <div className="flex justify-end">
           <button
             type="button"
             className="mr-2 px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50"
+            onClick={handleCancel}
           >
             Cancel
           </button>

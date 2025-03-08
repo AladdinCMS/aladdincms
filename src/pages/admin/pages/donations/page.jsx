@@ -1,96 +1,76 @@
 import React, { useState } from 'react'
+import DonationCharts from '../../components/cms/DonationCharts'
 
 const DonationsPage = () => {
   const [dateRange, setDateRange] = useState('all')
-  const [typeFilter, setTypeFilter] = useState('all')
-
-  // Sample donations data
+  const [selectedDonation, setSelectedDonation] = useState(null)
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false)
+  
+  // Sample donations data with simplified structure
   const donations = [
     {
       id: 1,
-      donor: 'John Smith',
+      name: 'John Smith',
       email: 'john.smith@example.com',
       amount: 250.00,
       date: '2024-10-12',
-      paymentMethod: 'Credit Card',
-      type: 'one-time',
-      campaign: 'Earth Day 2025',
-      status: 'completed'
+      message: 'Happy to support your cause!'
     },
     {
       id: 2,
-      donor: 'Maria Garcia',
+      name: 'Maria Garcia',
       email: 'maria.g@example.com',
       amount: 50.00,
       date: '2024-10-10',
-      paymentMethod: 'PayPal',
-      type: 'monthly',
-      campaign: 'General Fund',
-      status: 'completed'
+      message: 'Keep up the good work'
     },
     {
       id: 3,
-      donor: 'Robert Johnson',
-      email: 'robert.j@example.com',
+      name: 'Anonymous',
+      email: 'anonymous',
       amount: 1000.00,
       date: '2024-10-05',
-      paymentMethod: 'Bank Transfer',
-      type: 'one-time',
-      campaign: 'Community Garden Project',
-      status: 'completed'
+      message: 'For the Community Garden Project'
     },
     {
       id: 4,
-      donor: 'Corporate Partner Inc.',
+      name: 'Corporate Partner Inc.',
       email: 'sponsorship@corppartner.com',
       amount: 5000.00,
       date: '2024-09-28',
-      paymentMethod: 'Check',
-      type: 'sponsored',
-      campaign: 'Youth Program Sponsorship',
-      status: 'completed'
+      message: 'Supporting the Youth Program'
     },
     {
       id: 5,
-      donor: 'Emily Wilson',
-      email: 'emily.w@example.com',
+      name: 'Anonymous',
+      email: 'anonymous',
       amount: 75.00,
       date: '2024-09-15',
-      paymentMethod: 'Credit Card',
-      type: 'monthly',
-      campaign: 'General Fund',
-      status: 'completed'
+      message: ''
     }
   ]
 
-  // Filter donations based on date range and type
+  // Filter donations based on date range
   const filteredDonations = donations.filter(donation => {
     // Date filtering logic would go here
     // For demo purposes, we'll just return true for 'all'
-    const dateMatch = dateRange === 'all' ? true : true
-    
-    // Filter by donation type
-    const typeMatch = typeFilter === 'all' || donation.type === typeFilter
-    
-    return dateMatch && typeMatch
+    return dateRange === 'all' ? true : true
   })
+
+  // Handle viewing a donation
+  const handleViewDonation = (donation) => {
+    setSelectedDonation(donation)
+    setIsViewModalOpen(true)
+  }
+
+  // Close the view modal
+  const closeViewModal = () => {
+    setIsViewModalOpen(false)
+    setSelectedDonation(null)
+  }
 
   // Calculate total amount
   const totalAmount = filteredDonations.reduce((sum, donation) => sum + donation.amount, 0)
-  
-  // Get donation type badge
-  const getDonationTypeBadge = (type) => {
-    switch(type) {
-      case 'one-time':
-        return <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">One-time</span>
-      case 'monthly':
-        return <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Monthly</span>
-      case 'sponsored':
-        return <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">Sponsored</span>
-      default:
-        return <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">{type}</span>
-    }
-  }
 
   return (
     <div>
@@ -147,6 +127,9 @@ const DonationsPage = () => {
         </div>
       </div>
 
+      {/* Donation Charts */}
+      <DonationCharts />
+
       {/* Filter Controls */}
       <div className="bg-white p-4 rounded-lg shadow mb-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -164,21 +147,6 @@ const DonationsPage = () => {
                 <option value="last_month">Last Month</option>
                 <option value="this_year">This Year</option>
                 <option value="custom">Custom Range</option>
-              </select>
-            </div>
-            
-            <div>
-              <label htmlFor="typeFilter" className="block text-sm font-medium text-gray-700">Donation Type</label>
-              <select 
-                id="typeFilter"
-                className="mt-1 border border-gray-300 rounded-md p-2"
-                value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
-              >
-                <option value="all">All Types</option>
-                <option value="one-time">One-time</option>
-                <option value="monthly">Monthly</option>
-                <option value="sponsored">Sponsored</option>
               </select>
             </div>
           </div>
@@ -206,10 +174,7 @@ const DonationsPage = () => {
                 Date
               </th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Type
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Campaign
+                Message
               </th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
@@ -220,31 +185,92 @@ const DonationsPage = () => {
             {filteredDonations.map((donation) => (
               <tr key={donation.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{donation.donor}</div>
-                  <div className="text-sm text-gray-500">{donation.email}</div>
+                  <div className="text-sm font-medium text-gray-900">{donation.name}</div>
+                  <div className="text-sm text-gray-500">
+                    {donation.email !== 'anonymous' ? donation.email : 'Anonymous'}
+                  </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">${donation.amount.toFixed(2)}</div>
-                  <div className="text-sm text-gray-500">{donation.paymentMethod}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {new Date(donation.date).toLocaleDateString()}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {getDonationTypeBadge(donation.type)}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {donation.campaign}
+                <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
+                  {donation.message || '-'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button className="text-blue-600 hover:text-blue-900 mr-3">View</button>
-                  <button className="text-green-600 hover:text-green-900 mr-3">Thank</button>
+                  <button 
+                    className="text-blue-600 hover:text-blue-900 mr-3"
+                    onClick={() => handleViewDonation(donation)}
+                  >
+                    View
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {/* Donation View Modal */}
+      {isViewModalOpen && selectedDonation && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
+          <div className="relative mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-medium text-gray-900">Donation Details</h3>
+              <button 
+                className="text-gray-500 hover:text-gray-700"
+                onClick={closeViewModal}
+              >
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="mt-2">
+              <div className="border-b pb-2 mb-2">
+                <div className="text-sm text-gray-500">Donor</div>
+                <div className="font-medium">{selectedDonation.name}</div>
+              </div>
+              
+              <div className="border-b pb-2 mb-2">
+                <div className="text-sm text-gray-500">Email</div>
+                <div className="font-medium">
+                  {selectedDonation.email !== 'anonymous' ? selectedDonation.email : 'Anonymous'}
+                </div>
+              </div>
+              
+              <div className="border-b pb-2 mb-2">
+                <div className="text-sm text-gray-500">Amount</div>
+                <div className="font-medium text-green-600">${selectedDonation.amount.toFixed(2)}</div>
+              </div>
+              
+              <div className="border-b pb-2 mb-2">
+                <div className="text-sm text-gray-500">Date</div>
+                <div className="font-medium">{new Date(selectedDonation.date).toLocaleDateString()}</div>
+              </div>
+              
+              <div>
+                <div className="text-sm text-gray-500">Message</div>
+                <div className="font-medium whitespace-pre-wrap">
+                  {selectedDonation.message || 'No message provided'}
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-4 flex justify-end">
+              <button
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                onClick={closeViewModal}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

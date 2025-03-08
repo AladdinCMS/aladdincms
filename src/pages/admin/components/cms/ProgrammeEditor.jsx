@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const ProgrammeEditor = ({ programme, onSave }) => {
+const ProgrammeEditor = ({ programme, onSave, onCancel }) => {
   const [formData, setFormData] = useState(programme || {
     name: '',
     date: new Date().toISOString().split('T')[0],
@@ -36,6 +36,12 @@ const ProgrammeEditor = ({ programme, onSave }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSave(formData);
+  };
+
+  const handleCancel = () => {
+    if (onCancel) {
+      onCancel();
+    }
   };
 
   return (
@@ -170,6 +176,7 @@ const ProgrammeEditor = ({ programme, onSave }) => {
           <button
             type="button"
             className="mr-2 px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50"
+            onClick={handleCancel}
           >
             Cancel
           </button>
