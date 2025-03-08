@@ -28,7 +28,7 @@ import HeaderNavbar from "./components/Header.jsx";
 const AppLayout = () => {
   const location = useLocation();
   const isAdminPath = location.pathname.startsWith('/admin');
-  
+
   return (
     <>
       <main>
