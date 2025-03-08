@@ -5,16 +5,16 @@ const AdminPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-green-600 shadow">
-        <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 ">
           <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
         </div>
       </header>
-      
+
       <main>
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              
+
               {/* CMS Card */}
               <div className="bg-white overflow-hidden shadow rounded-lg">
                 <div className="p-5">
@@ -42,7 +42,7 @@ const AdminPage = () => {
                   </div>
                 </div>
               </div>
-              
+
               {/* Other admin tools would go here */}
               {/* ... */}
             </div>
