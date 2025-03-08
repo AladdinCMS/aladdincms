@@ -5,6 +5,10 @@ import SignUp from "./pages/login/auth/signup.jsx";
 
 import HomePage from "./pages/home/home.jsx";
 
+import Volunteer from "./pages/volunteer/volunteer";
+import Contact from "./pages/external/page";
+import Footer from "./components/Footer";
+
 function App() {
   return (
     <>
@@ -14,7 +18,11 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
+
+            <Route path="/volunteer" element={<Volunteer />} />
+            <Route path="/contact" element={<Contact />} />
           </Routes>
+          <Footer />
         </BrowserRouter>
       </main>
     </>
