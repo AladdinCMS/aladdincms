@@ -6,7 +6,7 @@ import SignUp from "./pages/login/auth/signup.jsx";
 import HomePage from "./pages/home/home.jsx";
 
 import Volunteer from "./pages/volunteer/volunteer";
-import Contact from "./pages/external/contact/contect.jsx";
+import Contact from "./pages/external/contact/contact.jsx";
 import Footer from "./components/Footer";
 
 function App() {
