@@ -30,7 +30,7 @@ const HomePage = () => {
             </header>
 
             {/* Features Section */}
-            <section className="max-w-6xl mx-auto px-6 py-16">
+            console.log('HomePage component rendered');          <section className="max-w-6xl mx-auto px-6 py-16">
                 <h3 className="text-3xl font-bold text-center">Our Programs</h3>
 
                 <ImageSlider />
