@@ -16,37 +16,52 @@ import ProgrammesPage from './pages/admin/pages/content/programmes/page'
 import DocumentsPage from './pages/admin/pages/content/documents/page'
 import DonationsPage from './pages/admin/pages/donations/page'
 import VolunteersPage from './pages/admin/pages/volunteers/page'
+import SignIn from "./pages/login/auth/signin.jsx";
+import SignUp from "./pages/login/auth/signup.jsx";
+
+import HomePage from "./pages/home/home.jsx";
+
+import Volunteer from "./pages/volunteer/volunteer";
+import Contact from "./pages/external/contact/contect.jsx";
+import Footer from "./components/Footer";
 
 function App() {
   // In a real app, you would check for auth status from your auth context/provider
   // For the hackathon, let's just redirect to the auth page when accessing admin routes
   
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<ExternalPage />} />
-        <Route path="/participant" element={<ParticipantPage />} />
-        <Route path="/volunteer" element={<VolunteerPage />} />
-        
-        {/* Auth page */}
-        <Route path="/admin/auth" element={<AuthPage />} />
-        
-        {/* Redirect /admin to /admin/auth */}
-        <Route path="/admin" element={<Navigate to="/admin/auth" replace />} />
-        
-        {/* CMS Routes - Nested under the CMS Layout */}
-        {/* In a real app, these would be protected routes */}
-        <Route path="/admin" element={<CmsLayout />}>
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="content/news" element={<NewsPage />} />
-          <Route path="content/programmes" element={<ProgrammesPage />} />
-          <Route path="content/documents" element={<DocumentsPage />} />
-          <Route path="donations" element={<DonationsPage />} />
-          <Route path="volunteers" element={<VolunteersPage />} />
-        </Route>
-      </Routes>
-    </Router>
-  )
+    <>
+      <main>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
+
+            <Route path="/volunteer" element={<Volunteer />} />
+            <Route path="/contact" element={<Contact />} />
+
+            {/* Auth page */}
+            <Route path="/admin/auth" element={<AuthPage />} />
+            
+            {/* Redirect /admin to /admin/auth */}
+            <Route path="/admin" element={<Navigate to="/admin/auth" replace />} />
+            
+            {/* CMS Routes - Nested under the CMS Layout */}
+            <Route path="/admin" element={<CmsLayout />}>
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="content/news" element={<NewsPage />} />
+              <Route path="content/programmes" element={<ProgrammesPage />} />
+              <Route path="content/documents" element={<DocumentsPage />} />
+              <Route path="donations" element={<DonationsPage />} />
+              <Route path="volunteers" element={<VolunteersPage />} />
+            </Route>
+          </Routes>
+          <Footer />
+        </BrowserRouter>
+      </main>
+    </>
+  );
 }
 
 export default App
