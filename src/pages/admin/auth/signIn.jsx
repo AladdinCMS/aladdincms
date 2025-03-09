@@ -34,17 +34,17 @@ const AdminSignIn = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-green-600  flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
-          <div className="w-20 h-20 rounded-full bg-green-600 flex items-center justify-center">
-            <span className="text-2xl font-bold text-white">GT</span>
+          <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center">
+            <span className="text-2xl font-bold text-green-600">GT</span>
           </div>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
           The Green Team CMS
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="mt-2 text-center text-sm text-white">
           Content Management System
         </p>
       </div>
