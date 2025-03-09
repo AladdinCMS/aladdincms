@@ -113,12 +113,14 @@ function TeamSection() {
           </div>
 
           <div
-            className={`flex flex-col justify-center rounded-lg border bg-white p-6 shadow-md transition-opacity duration-300 ${
+            className={`flex flex-col justify-center rounded-lg border bg-white  shadow-md transition-opacity duration-300 ${
               isAnimating ? "opacity-0" : "opacity-100"
             }`}
           >
             {selectedMember ? (
-              <div className="space-y-4">
+              <div className="space-y-4 relative bg-cover h-full bg-center p-6 rounded-lg shadow-lg" style={{
+                backgroundImage: "url('https://www.greenteam.org.uk/wp-content/uploads/2024/08/hero-image-focus-on-new-planted-sapling-people-blurred-in-background-1024x512.png')",
+              }}>
                 <div className="flex items-center gap-4">
                   <div className="relative h-20 w-20 overflow-hidden rounded-full">
                     <img
@@ -132,9 +134,9 @@ function TeamSection() {
                     <p className="text-green-600">{selectedMember.role}</p>
                   </div>
                 </div>
-                <p className="text-gray-700">{selectedMember.bio}</p>
+                <p className="text-black">{selectedMember.bio}</p>
                 <a href={selectedMember?.link}>
-                  <button className="mt-4 inline-flex items-center rounded-md border border-green-600 px-4 py-2 text-sm font-medium text-green-600 hover:bg-green-50">
+                  <button className="mt-4 inline-flex items-center rounded-md border border-green-600 bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-50 hover:text-green-600">
                   Full Profile
                 </button>
                 </a>

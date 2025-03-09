@@ -12,6 +12,7 @@ import Slideshow from "./components/slideshow"
 function AboutPage() {
   return (
     <div className="flex min-h-screen flex-col">
+      {/* this is bot to top button */}
       {/* Hero Section */}
       <section className="relative bg-green-800 py-20 text-white md:py-28">
         <div className="absolute inset-0 opacity-20">
