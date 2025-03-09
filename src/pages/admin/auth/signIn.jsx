@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { useForm } from "react-hook-form"; // Import useForm
-import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 
 const AdminSignIn = () => {
@@ -10,7 +10,7 @@ const AdminSignIn = () => {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm(); // Initialize useForm
+  } = useForm();
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -18,33 +18,52 @@ const AdminSignIn = () => {
   const onSubmit = async (data) => {
     setError(null);
     try {
-      const { data: myData } = await axios.post(
+      console.log("Making login request to:", `${import.meta.env.VITE_API_URL}/auth/admin/signIn`);
+      
+      const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/auth/admin/signIn`,
         data
       );
-
-      console.log(myData);
-      reset();
+      
+      console.log("Full response:", response);
+      const myData = response.data;
+      console.log("Response data:", myData);
+      
+      if (!myData.token) {
+        console.error("No token in response");
+        setError("Login successful but no token received");
+        return;
+      }
+      
+      if (!myData.role) {
+        console.error("No role in response");
+        setError("Login successful but no role received");
+        return;
+      }
+      
+      console.log("Setting cookie:", myData.role, myData.token);
       Cookies.set(`${myData.role}`, myData.token);
+      
+      console.log("Navigating to dashboard");
       navigate("/admin/dashboard");
     } catch (error) {
-      // console.log(error);
-      setError(error.response.data.message);
+      console.error("Login error:", error);
+      setError(error.response?.data?.message || "An error occurred");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-green-600 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
-          <div className="w-20 h-20 rounded-full bg-green-600 flex items-center justify-center">
-            <span className="text-2xl font-bold text-white">GT</span>
+          <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center">
+            <span className="text-2xl font-bold text-green-600">GT</span>
           </div>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
           The Green Team CMS
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="mt-2 text-center text-sm text-white">
           Content Management System
         </p>
       </div>
@@ -132,10 +151,6 @@ const AdminSignIn = () => {
               >
                 {isSubmitting ? "Signing in..." : "Sign in"}
               </button>
-            </div>
-
-            <div className="text-sm text-center">
-              <Link to={"/admin/signUp"}>Don't have an account? Sign up</Link>
             </div>
           </form>
         </div>
