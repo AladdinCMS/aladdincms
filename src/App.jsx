@@ -31,6 +31,8 @@ function App() {
     <>
       <main>
         {!isAdminPath && <HeaderNavbar />}
+        {!isAdminPath && <div className="pt-17"></div>}
+
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/signin" element={<SignIn />} />
@@ -54,6 +56,7 @@ function App() {
             <Route path="volunteers" element={<VolunteersPage />} />
           </Route>
         </Routes>
+
         {!isAdminPath && <Footer />}
       </main>
     </>
