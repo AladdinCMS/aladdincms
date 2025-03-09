@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import ImageSlider from "../../components/Slider";
 import Slider from "../../components/ImageSlider";
 import VideoLanding from "../../components/VideoLanding";
+import SignUp from "../login/auth/signup";
 
 
 const HomePage = () => {
@@ -19,7 +20,7 @@ const HomePage = () => {
                     <p className="text-lg mt-4">Environmental Conservation Volunteering For Young People Aged 12-18</p>
 
                 </div>
-                <Link to='/signin'>
+                <Link to='/signup'>
                     <button className="mt-6 px-6 py-3 bg-white text-green-500 font-semibold rounded-lg shadow-md hover:bg-green-500 hover:text-white transition">
                         Get Started
                     </button>

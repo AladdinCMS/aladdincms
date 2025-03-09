@@ -12,6 +12,7 @@ import HomePage from "./pages/home/home.jsx";
 import Volunteer from "./pages/volunteer/volunteer";
 import Contact from "./pages/external/contact/contact.jsx";
 import Footer from "./components/Footer";
+import DonateUs from "./pages/external/donateus/donateUs.jsx";
 // Import CMS components
 import AuthPage from "./pages/admin/auth/page";
 import CmsLayout from "./pages/admin/cms";
@@ -24,6 +25,8 @@ import UsersPage from "./pages/admin/pages/users/page.jsx";
 import SignUp from "./pages/login/auth/signup.jsx";
 import HeaderNavbar from "./components/Header.jsx";
 import BackToTopButton from "./components/bot_2_top.jsx";
+import SupportUs from "./pages/external/support/support.jsx";
+
 
 // Layout wrapper component to conditionally render header and footer
 const AppLayout = () => {
@@ -34,13 +37,15 @@ const AppLayout = () => {
       <main>
         {!isAdminPath && <HeaderNavbar />}
         {!isAdminPath && <div className="pt-17"></div>}
-        <BackToTopButton/>
+        <BackToTopButton />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/volunteer" element={<Volunteer />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/support" element={<SupportUs />} />
+          <Route path="/donateus" element={<DonateUs />} />
           {/* Auth page */}
           <Route path="/admin/auth" element={<AuthPage />} />
           {/* Redirect /admin to /admin/auth */}
