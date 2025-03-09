@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import ContentCard from '../../../components/cms/ContentCard'
 import NewsEditor from '../../../components/cms/NewsEditor'
+import axios from 'axios'
 
 const NewsPage = () => {
   const [showEditor, setShowEditor] = useState(false)
@@ -8,6 +9,9 @@ const NewsPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('All Categories')
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
   const [articleToDelete, setArticleToDelete] = useState(null)
+  const [newsArticles, setNewsArticles] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
   
   // Categories as specified
   const categories = [
@@ -30,59 +34,24 @@ const NewsPage = () => {
     'Volunteering'
   ]
   
-  // Sample news data with updated categories and images
-  const [newsArticles, setNewsArticles] = useState([
-    { 
-      id: 1, 
-      title: 'Sustainability Initiative Launch', 
-      type: 'news', 
-      category: 'Environment',
-      date: '2025-03-02',
-      lastModified: 'Mar 2, 2025',
-      content: 'The Green Team is proud to announce our new sustainability initiative aimed at reducing carbon footprint in our community. This program will focus on education and practical steps for individuals and businesses.',
-      image: '/api/placeholder/800/400'
-    },
-    { 
-      id: 3, 
-      title: 'Earth Day Celebration', 
-      type: 'news', 
-      category: 'Events',
-      date: '2025-02-28',
-      lastModified: 'Feb 28, 2025',
-      content: 'Join us for our annual Earth Day celebration with activities for all ages, environmental workshops, and local food vendors. The event will take place at City Park from 10am to 4pm.',
-      image: '/api/placeholder/800/400'
-    },
-    { 
-      id: 5, 
-      title: 'New Green Space Project', 
-      type: 'news', 
-      category: 'Community',
-      date: '2025-02-20',
-      lastModified: 'Feb 20, 2025',
-      content: 'We are excited to announce the development of a new green space in the downtown area. This project will transform an unused lot into a community garden and recreational area.',
-      image: null
-    },
-    { 
-      id: 6, 
-      title: 'Volunteer Recognition Awards', 
-      type: 'news', 
-      category: 'Awards',
-      date: '2025-02-15',
-      lastModified: 'Feb 15, 2025',
-      content: 'We are pleased to announce our annual Volunteer Recognition Awards ceremony taking place next month. Join us as we celebrate the dedicated individuals who have contributed to our mission.',
-      image: '/api/placeholder/800/400'
-    },
-    { 
-      id: 7, 
-      title: 'Duke of Edinburgh Award Information Session', 
-      type: 'news', 
-      category: 'DofE',
-      date: '2025-02-10',
-      lastModified: 'Feb 10, 2025',
-      content: 'Interested in the Duke of Edinburgh Award program? Attend our information session to learn about the requirements, benefits, and how to register for this prestigious youth development program.',
-      image: null
+  // Fetch news articles on component mount
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        setIsLoading(true)
+        const response = await axios.get('http://localhost:3000/api/v1/news')
+        setNewsArticles(response.data)
+        setError(null)
+      } catch (err) {
+        console.error('Error fetching news articles:', err)
+        setError('Failed to load news articles. Please try again.')
+      } finally {
+        setIsLoading(false)
+      }
     }
-  ]);
+    
+    fetchNews()
+  }, [])
 
   // Filter articles based on selected category
   const filteredArticles = selectedCategory === 'All Categories' 
@@ -99,11 +68,17 @@ const NewsPage = () => {
     setShowDeleteConfirmation(true)
   }
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (articleToDelete) {
-      setNewsArticles(prev => prev.filter(article => article.id !== articleToDelete.id))
-      setShowDeleteConfirmation(false)
-      setArticleToDelete(null)
+      try {
+        await axios.delete(`http://localhost:3000/api/v1/news/${articleToDelete._id}`)
+        setNewsArticles(prev => prev.filter(article => article._id !== articleToDelete._id))
+        setShowDeleteConfirmation(false)
+        setArticleToDelete(null)
+      } catch (err) {
+        console.error('Error deleting news article:', err)
+        alert('Failed to delete news article. Please try again.')
+      }
     }
   }
 
@@ -112,29 +87,26 @@ const NewsPage = () => {
     setArticleToDelete(null)
   }
 
-  const handleSave = (data) => {
-    const updatedData = {
-      ...data,
-      lastModified: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-    };
-    
-    if (data.id) {
-      // Update existing article
-      setNewsArticles(prev => prev.map(article => 
-        article.id === data.id ? updatedData : article
-      ));
-    } else {
-      // Create new article
-      const newArticle = {
-        ...updatedData,
-        id: Math.max(...newsArticles.map(a => a.id)) + 1,
-        type: 'news'
-      };
-      setNewsArticles(prev => [...prev, newArticle]);
+  const handleSave = async (data) => {
+    try {
+      if (data._id) {
+        // Update existing article
+        const response = await axios.put(`http://localhost:3000/api/v1/news/${data._id}`, data)
+        setNewsArticles(prev => prev.map(article => 
+          article._id === data._id ? response.data.news : article
+        ));
+      } else {
+        // Create new article
+        const response = await axios.post('http://localhost:3000/api/v1/news', data)
+        setNewsArticles(prev => [...prev, response.data.news]);
+      }
+      
+      setShowEditor(false)
+      setEditingItem(null)
+    } catch (err) {
+      console.error('Error saving news article:', err)
+      alert('Failed to save news article. Please try again.')
     }
-    
-    setShowEditor(false)
-    setEditingItem(null)
   }
   
   const handleCancel = () => {
@@ -144,6 +116,24 @@ const NewsPage = () => {
 
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.target.value)
+  }
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-xl text-gray-500">Loading news articles...</p>
+      </div>
+    )
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-xl text-red-500">{error}</p>
+      </div>
+    )
   }
 
   return (
@@ -220,11 +210,15 @@ const NewsPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredArticles.length > 0 ? (
             filteredArticles.map((item) => (
-              <div key={item.id}>
+              <div key={item._id}>
                 <ContentCard
                   title={item.title}
-                  type={item.type}
-                  lastModified={item.lastModified}
+                  type="news"
+                  lastModified={new Date(item.updatedAt).toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric', 
+                    year: 'numeric' 
+                  })}
                   category={item.category}
                   details={item.content.substring(0, 100) + '...'}
                   image={item.image}

@@ -1,61 +1,86 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import DonationCharts from '../../components/cms/DonationCharts'
+import axios from 'axios' // Make sure to install axios
 
 const DonationsPage = () => {
   const [dateRange, setDateRange] = useState('all')
+  const [sortOption, setSortOption] = useState('newest')
   const [selectedDonation, setSelectedDonation] = useState(null)
   const [isViewModalOpen, setIsViewModalOpen] = useState(false)
-  
-  // Sample donations data with simplified structure
-  const donations = [
-    {
-      id: 1,
-      name: 'John Smith',
-      email: 'john.smith@example.com',
-      amount: 250.00,
-      date: '2024-10-12',
-      message: 'Happy to support your cause!'
-    },
-    {
-      id: 2,
-      name: 'Maria Garcia',
-      email: 'maria.g@example.com',
-      amount: 50.00,
-      date: '2024-10-10',
-      message: 'Keep up the good work'
-    },
-    {
-      id: 3,
-      name: 'Anonymous',
-      email: 'anonymous',
-      amount: 1000.00,
-      date: '2024-10-05',
-      message: 'For the Community Garden Project'
-    },
-    {
-      id: 4,
-      name: 'Corporate Partner Inc.',
-      email: 'sponsorship@corppartner.com',
-      amount: 5000.00,
-      date: '2024-09-28',
-      message: 'Supporting the Youth Program'
-    },
-    {
-      id: 5,
-      name: 'Anonymous',
-      email: 'anonymous',
-      amount: 75.00,
-      date: '2024-09-15',
-      message: ''
-    }
-  ]
-
-  // Filter donations based on date range
-  const filteredDonations = donations.filter(donation => {
-    // Date filtering logic would go here
-    // For demo purposes, we'll just return true for 'all'
-    return dateRange === 'all' ? true : true
+  const [donations, setDonations] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [stats, setStats] = useState({
+    totalAmount: 0,
+    totalDonations: 0,
+    avgDonation: 0
   })
+  
+  // Fetch donations and stats on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true)
+        
+        // Fetch donations
+        const donationsResponse = await axios.get('http://localhost:3000/api/v1/donations')
+        setDonations(donationsResponse.data)
+        
+        // Fetch donation stats
+        const statsResponse = await axios.get('http://localhost:3000/api/v1/donations/stats')
+        setStats(statsResponse.data)
+        
+        setError(null)
+      } catch (err) {
+        console.error('Error fetching donation data:', err)
+        setError('Failed to load donation data. Please try again.')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    
+    fetchData()
+  }, [])
+
+  // Memoized filtered and sorted donations
+  const filteredAndSortedDonations = useMemo(() => {
+    const now = new Date()
+    
+    // First, filter donations based on date range
+    const filtered = donations.filter(donation => {
+      const donationDate = new Date(donation.date)
+      
+      if (dateRange === 'all') return true
+      
+      if (dateRange === 'this_month') {
+        return donationDate.getMonth() === now.getMonth() && 
+               donationDate.getFullYear() === now.getFullYear()
+      }
+      
+      if (dateRange === 'last_month') {
+        const lastMonth = now.getMonth() === 0 ? 11 : now.getMonth() - 1
+        const lastMonthYear = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear()
+        return donationDate.getMonth() === lastMonth && 
+               donationDate.getFullYear() === lastMonthYear
+      }
+      
+      if (dateRange === 'this_year') {
+        return donationDate.getFullYear() === now.getFullYear()
+      }
+      
+      return true
+    })
+
+    // Then, sort donations
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.date)
+      const dateB = new Date(b.date)
+      
+      return sortOption === 'newest' 
+        ? dateB.getTime() - dateA.getTime() 
+        : dateA.getTime() - dateB.getTime()
+    })
+  }, [donations, dateRange, sortOption])
 
   // Handle viewing a donation
   const handleViewDonation = (donation) => {
@@ -69,8 +94,23 @@ const DonationsPage = () => {
     setSelectedDonation(null)
   }
 
-  // Calculate total amount
-  const totalAmount = filteredDonations.reduce((sum, donation) => sum + donation.amount, 0)
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-xl text-gray-500">Loading donation data...</p>
+      </div>
+    )
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-xl text-red-500">{error}</p>
+      </div>
+    )
+  }
 
   return (
     <div>
@@ -90,7 +130,7 @@ const DonationsPage = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm text-gray-500 font-medium">Total Donations</p>
-              <p className="text-2xl font-bold text-gray-900">${totalAmount.toFixed(2)}</p>
+              <p className="text-2xl font-bold text-gray-900">£{stats.totalAmount.toFixed(2)}</p>
             </div>
           </div>
         </div>
@@ -104,7 +144,7 @@ const DonationsPage = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm text-gray-500 font-medium">Total Donors</p>
-              <p className="text-2xl font-bold text-gray-900">{filteredDonations.length}</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.totalDonations}</p>
             </div>
           </div>
         </div>
@@ -120,7 +160,7 @@ const DonationsPage = () => {
             <div className="ml-4">
               <p className="text-sm text-gray-500 font-medium">Avg. Donation</p>
               <p className="text-2xl font-bold text-gray-900">
-                ${(totalAmount / filteredDonations.length).toFixed(2)}
+              £{stats.avgDonation.toFixed(2)}
               </p>
             </div>
           </div>
@@ -128,7 +168,7 @@ const DonationsPage = () => {
       </div>
 
       {/* Donation Charts */}
-      <DonationCharts />
+      <DonationCharts donationsData={donations} />
 
       {/* Filter Controls */}
       <div className="bg-white p-4 rounded-lg shadow mb-6">
@@ -147,6 +187,18 @@ const DonationsPage = () => {
                 <option value="last_month">Last Month</option>
                 <option value="this_year">This Year</option>
                 <option value="custom">Custom Range</option>
+              </select>
+            </div>
+            <div>
+              <label htmlFor="sortOption" className="block text-sm font-medium text-gray-700">Sort By</label>
+              <select
+                id="sortOption"
+                className="mt-1 border border-gray-300 rounded-md p-2"
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value)}
+              >
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
               </select>
             </div>
           </div>
@@ -182,33 +234,41 @@ const DonationsPage = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {filteredDonations.map((donation) => (
-              <tr key={donation.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{donation.name}</div>
-                  <div className="text-sm text-gray-500">
-                    {donation.email !== 'anonymous' ? donation.email : 'Anonymous'}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">${donation.amount.toFixed(2)}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {new Date(donation.date).toLocaleDateString()}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
-                  {donation.message || '-'}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button 
-                    className="text-blue-600 hover:text-blue-900 mr-3"
-                    onClick={() => handleViewDonation(donation)}
-                  >
-                    View
-                  </button>
+            {filteredAndSortedDonations.length > 0 ? (
+              filteredAndSortedDonations.map((donation) => (
+                <tr key={donation._id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">{donation.name}</div>
+                    <div className="text-sm text-gray-500">
+                      {donation.email !== 'anonymous' ? donation.email : 'Anonymous'}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">£{donation.amount.toFixed(2)}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {new Date(donation.date).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
+                    {donation.message || '-'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button 
+                      className="text-blue-600 hover:text-blue-900 mr-3"
+                      onClick={() => handleViewDonation(donation)}
+                    >
+                      View
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
+                  No donations found for the selected time period.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
@@ -244,7 +304,7 @@ const DonationsPage = () => {
               
               <div className="border-b pb-2 mb-2">
                 <div className="text-sm text-gray-500">Amount</div>
-                <div className="font-medium text-green-600">${selectedDonation.amount.toFixed(2)}</div>
+                <div className="font-medium text-green-600">£{selectedDonation.amount.toFixed(2)}</div>
               </div>
               
               <div className="border-b pb-2 mb-2">

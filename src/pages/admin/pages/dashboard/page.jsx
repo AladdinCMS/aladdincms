@@ -1,8 +1,152 @@
-import React from 'react'
-import StatCard from '../../components/cms/StatCard'
-
+import React, { useState, useEffect } from 'react';
+import StatCard from '../../components/cms/StatCard';
+import axios from 'axios';
 
 const Dashboard = () => {
+  const [stats, setStats] = useState({
+    totalDocuments: 0,
+    totalUsers: 0,
+    totalProgrammes: 0,
+    totalNews: 0
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [recentUpdates, setRecentUpdates] = useState([]);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setIsLoading(true);
+        
+        // Fetch counts from all endpoints
+        const [documentsRes, programmesRes, newsRes] = await Promise.all([
+          axios.get('http://localhost:3000/api/v1/documents'),
+          axios.get('http://localhost:3000/api/v1/programmes'),
+          axios.get('http://localhost:3000/api/v1/news')
+        ]);
+        
+        // Optional - you can also fetch volunteers if that endpoint is ready
+        // const volunteersRes = await axios.get('http://localhost:3000/api/v1/volunteers');
+        
+        // Combine all data to create recent updates
+        let allItems = [
+          ...documentsRes.data.map(item => ({
+            ...item,
+            type: 'document',
+            updateTime: new Date(item.updatedAt || item.createdAt)
+          })),
+          ...programmesRes.data.map(item => ({
+            ...item,
+            type: 'programme',
+            updateTime: new Date(item.updatedAt || item.createdAt)
+          })),
+          ...newsRes.data.map(item => ({
+            ...item,
+            type: 'news',
+            updateTime: new Date(item.updatedAt || item.createdAt)
+          }))
+        ];
+        
+        // Sort by update time (most recent first)
+        allItems.sort((a, b) => b.updateTime - a.updateTime);
+        
+        // Take latest 5 items
+        const latestUpdates = allItems.slice(0, 5).map(item => {
+          const timeAgo = getTimeAgo(item.updateTime);
+          let title, user;
+          
+          if (item.type === 'document') {
+            title = item.name;
+            user = item.uploadedBy;
+          } else if (item.type === 'programme') {
+            title = item.name;
+            user = 'Admin';
+          } else if (item.type === 'news') {
+            title = item.title;
+            user = 'Admin';
+          }
+          
+          return {
+            title,
+            type: item.type,
+            time: timeAgo,
+            user
+          };
+        });
+        
+        setRecentUpdates(latestUpdates);
+        
+        // Set stats
+        setStats({
+          totalDocuments: documentsRes.data.length,
+          totalProgrammes: programmesRes.data.length,
+          totalNews: newsRes.data.length,
+          // totalUsers: volunteersRes?.data?.length || 0
+          totalUsers: 12 // Replace with actual data when volunteers endpoint is ready
+        });
+        
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+        setError('Failed to load dashboard data. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchDashboardData();
+  }, []);
+  
+  // Helper function to get relative time
+  const getTimeAgo = (date) => {
+    const seconds = Math.floor((new Date() - date) / 1000);
+    
+    let interval = Math.floor(seconds / 31536000);
+    if (interval >= 1) {
+      return interval === 1 ? '1 year ago' : `${interval} years ago`;
+    }
+    
+    interval = Math.floor(seconds / 2592000);
+    if (interval >= 1) {
+      return interval === 1 ? '1 month ago' : `${interval} months ago`;
+    }
+    
+    interval = Math.floor(seconds / 86400);
+    if (interval >= 1) {
+      return interval === 1 ? '1 day ago' : `${interval} days ago`;
+    }
+    
+    interval = Math.floor(seconds / 3600);
+    if (interval >= 1) {
+      return interval === 1 ? '1 hour ago' : `${interval} hours ago`;
+    }
+    
+    interval = Math.floor(seconds / 60);
+    if (interval >= 1) {
+      return interval === 1 ? '1 minute ago' : `${interval} minutes ago`;
+    }
+    
+    return seconds < 10 ? 'just now' : `${seconds} seconds ago`;
+  };
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-xl text-gray-500">Loading dashboard...</p>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-xl text-red-500">{error}</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="mb-6">
@@ -14,7 +158,7 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <StatCard 
           title="Total Documents" 
-          value="126" 
+          value={stats.totalDocuments.toString()} 
           icon={
             <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -22,8 +166,8 @@ const Dashboard = () => {
           } 
         />
         <StatCard 
-          title="Marketing Materials" 
-          value="47" 
+          title="Total News Articles" 
+          value={stats.totalNews.toString()} 
           icon={
             <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
@@ -33,7 +177,7 @@ const Dashboard = () => {
         />
         <StatCard 
           title="Team Members" 
-          value="12" 
+          value={stats.totalUsers.toString()} 
           icon={
             <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -52,24 +196,17 @@ const Dashboard = () => {
               <p className="text-sm text-gray-500 mb-2">Latest content updates</p>
               <div className="w-full md:w-80">
                 <ul className="divide-y divide-gray-200">
-                  <li className="py-2">
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                      <span className="text-sm">New programme added: Summer Workshop</span>
-                    </div>
-                  </li>
-                  <li className="py-2">
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-                      <span className="text-sm">News article updated: Earth Day</span>
-                    </div>
-                  </li>
-                  <li className="py-2">
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
-                      <span className="text-sm">Document uploaded: Sustainability Report</span>
-                    </div>
-                  </li>
+                  {recentUpdates.slice(0, 3).map((update, index) => (
+                    <li key={index} className="py-2">
+                      <div className="flex items-center">
+                        <div className={`w-2 h-2 rounded-full mr-2 ${
+                          update.type === 'document' ? 'bg-purple-500' : 
+                          update.type === 'programme' ? 'bg-green-500' : 'bg-blue-500'
+                        }`}></div>
+                        <span className="text-sm">{update.title}</span>
+                      </div>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -107,26 +244,27 @@ const Dashboard = () => {
         <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Updates</h2>
         <div className="bg-white shadow rounded-lg overflow-hidden">
           <ul className="divide-y divide-gray-200">
-            {[
-              { title: 'Q1 Sustainability Report', time: '3 hours ago', user: 'Emma Lawson' },
-              { title: 'Earth Day Campaign Assets', time: '1 day ago', user: 'Mark Chen' },
-              { title: 'Community Garden Flyer', time: '2 days ago', user: 'Sophia Rodriguez' },
-            ].map((item, index) => (
+            {recentUpdates.map((update, index) => (
               <li key={index} className="p-4 hover:bg-gray-50">
                 <div className="flex justify-between">
                   <div>
-                    <p className="font-medium text-gray-900">{item.title}</p>
-                    <p className="text-sm text-gray-500">Updated by {item.user}</p>
+                    <p className="font-medium text-gray-900">{update.title}</p>
+                    <p className="text-sm text-gray-500">Updated by {update.user}</p>
                   </div>
-                  <p className="text-sm text-gray-500">{item.time}</p>
+                  <p className="text-sm text-gray-500">{update.time}</p>
                 </div>
               </li>
             ))}
+            {recentUpdates.length === 0 && (
+              <li className="p-4 text-center text-gray-500">
+                No recent updates found.
+              </li>
+            )}
           </ul>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;

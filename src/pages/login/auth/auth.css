@@ -1,0 +1,7 @@
+.auth-container {
+  background-image: url("../../../assets/auth-img.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100vw;
+  background-position: center;
+}
