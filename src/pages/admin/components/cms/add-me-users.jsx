@@ -1,51 +1,52 @@
-import React from "react";
-import {
-  Button,
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
-} from "@material-tailwind/react";
+import { Button, Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
+import { useState } from 'react'
 
-export function DialogCustomAnimation() {
-  const [open, setOpen] = React.useState(false);
+export default function MyModal() {
+  let [isOpen, setIsOpen] = useState(true)
 
-  const handleOpen = () => setOpen(!open);
+  function open() {
+    setIsOpen(true)
+  }
+
+  function close() {
+    setIsOpen(false)
+  }
 
   return (
-    <>
-      <Button onClick={handleOpen} variant="gradient">
-        Open Dialog
-      </Button>
-      <Dialog
-        open={open}
-        handler={handleOpen}
-        animate={{
-          mount: { scale: 1, y: 0 },
-          unmount: { scale: 0.9, y: -100 },
-        }}
+    <main>
+      <Button
+        onClick={open}
+        className="rounded-md bg-black/20 py-2 px-4 text-sm font-medium text-white focus:outline-none data-[hover]:bg-black/30 data-[focus]:outline-1 data-[focus]:outline-white"
       >
-        <DialogHeader>Its a simple dialog.</DialogHeader>
-        <DialogBody>
-          The key to more success is to have a lot of pillows. Put it this way,
-          it took me twenty five years to get these plants, twenty five years of
-          blood sweat and tears, and I&apos;m never giving up, I&apos;m just
-          getting started. I&apos;m up to something. Fan luv.
-        </DialogBody>
-        <DialogFooter>
-          <Button
-            variant="text"
-            color="red"
-            onClick={handleOpen}
-            className="mr-1"
-          >
-            <span>Cancel</span>
-          </Button>
-          <Button variant="gradient" color="green" onClick={handleOpen}>
-            <span>Confirm</span>
-          </Button>
-        </DialogFooter>
+        Open dialog
+      </Button>
+
+      <Dialog open={isOpen} as="div" className="relative z-10 focus:outline-none bg-black" onClose={close} __demoMode>
+        <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4">
+            <DialogPanel
+              transition
+              className="w-full max-w-md rounded-xl bg-black p-6 backdrop-blur-2xl duration-300 ease-out data-[closed]:transform-[scale(95%)] data-[closed]:opacity-0"
+            >
+              <DialogTitle as="h3" className="text-base/7 font-medium text-white">
+                Payment successful
+              </DialogTitle>
+              <p className="mt-2 text-sm/6 text-white/50">
+                Your payment has been successfully submitted. We’ve sent you an email with all of the details of your
+                order.
+              </p>
+              <div className="mt-4">
+                <Button
+                  className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[focus]:outline-1 data-[focus]:outline-white data-[open]:bg-gray-700"
+                  onClick={close}
+                >
+                  Got it, thanks!
+                </Button>
+              </div>
+            </DialogPanel>
+          </div>
+        </div>
       </Dialog>
-    </>
-  );
+    </main>
+  )
 }

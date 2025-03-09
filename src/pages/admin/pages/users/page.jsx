@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import UserEditor from "../../components/cms/UserEditor";
 import axios from "axios";
-import { DialogCustomAnimation } from "../../components/cms/add-me-users";
+import MyModal from "../../components/cms/add-me-users";
 
 const UsersPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -131,7 +131,7 @@ const UsersPage = () => {
 
   return (
     <div>
-      <DialogCustomAnimation/>
+      <MyModal/>
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Users</h1>
         <p className="text-gray-600">Manage user information</p>
