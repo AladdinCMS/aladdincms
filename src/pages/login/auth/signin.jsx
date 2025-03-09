@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import { Alert } from "@material-tailwind/react";
+import "../auth/auth.css"
 
 const SignIn = () => {
   const {
@@ -12,7 +14,8 @@ const SignIn = () => {
     reset,
   } = useForm();
   const [loading, setLoading] = useState(false);
-  
+  const [error, setError] = useState(null);
+
   const navigate = useNavigate();
 
   const onSignUp = async (data) => {
@@ -23,20 +26,23 @@ const SignIn = () => {
         data
       );
 
-    //   console.log(myData.token);
+      //   console.log(myData.token);
       Cookies.set(`${myData?.role}`, myData?.token);
       setLoading(false);
       reset();
       navigate("/");
     } catch (error) {
-      console.log(error);
+    //   console.log(error);
+      setError(error.response.data.message);
       setLoading(false);
     }
   };
+
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
+    <div className="flex items-center justify-center h-screen bg-gray-100 auth-container">
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-2xl font-semibold text-center">Sign In</h2>
+        {error && <Alert color="red">{error}</Alert>}
         <form className="mt-4" onSubmit={handleSubmit(onSignUp)}>
           <div className="mt-4 relative">
             <label className="block text-gray-700">Email</label>
