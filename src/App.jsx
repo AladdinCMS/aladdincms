@@ -7,7 +7,6 @@ import {
   useLocation
 } from "react-router-dom";
 import "./App.css";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AboutPage from "./pages/about/AboutPage";
 import HomePage from "./pages/home/home.jsx";
 import Volunteer from "./pages/volunteer/volunteer";
@@ -33,18 +32,18 @@ const AppLayout = () => {
   return (
     <>
       <main>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/about" element={<AboutPage />} />
-          </Routes>
-        </BrowserRouter>
+     
         {!isAdminPath && <HeaderNavbar />}
+        <div className="pt-17">
+
+        </div>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/volunteer" element={<Volunteer />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<AboutPage />} />
           {/* Auth page */}
           <Route path="/admin/auth" element={<AuthPage />} />
           {/* Redirect /admin to /admin/auth */}
