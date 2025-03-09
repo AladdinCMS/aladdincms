@@ -1,32 +1,33 @@
-import React from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import './App.css'
-import HeaderNavbar from './components/Header.jsx';
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
+import "./App.css";
+import AboutPage from "./pages/about/AboutPage";
 import HomePage from "./pages/home/home.jsx";
 import Volunteer from "./pages/volunteer/volunteer";
-import Contact from "./pages/external/contact/contect.jsx";
+import Contact from "./pages/external/contact/contact.jsx";
 import Footer from "./components/Footer";
 // Import CMS components
-import AuthPage from './pages/admin/auth/page'
-import CmsLayout from './pages/admin/cms'
-import Dashboard from './pages/admin/pages/dashboard/page'
-import NewsPage from './pages/admin/pages/content/news/page'
-import ProgrammesPage from './pages/admin/pages/content/programmes/page'
-import DocumentsPage from './pages/admin/pages/content/documents/page'
-import DonationsPage from './pages/admin/pages/donations/page'
-import VolunteersPage from './pages/admin/pages/volunteers/page'
-import SignIn from "./pages/login/auth/signin.jsx";
+import AuthPage from "./pages/admin/auth/page";
+import CmsLayout from "./pages/admin/cms";
+import Dashboard from "./pages/admin/pages/dashboard/page";
+import NewsPage from "./pages/admin/pages/content/news/page";
+import ProgrammesPage from "./pages/admin/pages/content/programmes/page";
+import DocumentsPage from "./pages/admin/pages/content/documents/page";
+import DonationsPage from "./pages/admin/pages/donations/page";
+import UsersPage from "./pages/admin/pages/users/page.jsx";
 import SignUp from "./pages/login/auth/signup.jsx";
+import HeaderNavbar from "./components/Header.jsx";
 
-// programms page
-import GreenVolunteersPage from './pages/admin/pages/programs/green.jsx';
-
-import SupportUs from "./pages/external/support/support.jsx";
-
-
-function App() {
-  // In a real app, you would check for auth status from your auth context/provider
-  // For the hackathon, let's just redirect to the auth page when accessing admin routes
+// Layout wrapper component to conditionally render header and footer
+const AppLayout = () => {
+  const location = useLocation();
+  const isAdminPath = location.pathname.startsWith("/admin");
   return (
     <>
       <main>
@@ -35,10 +36,10 @@ function App() {
 
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/volunteer" element={<Volunteer />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<AboutPage />} />
           {/* Auth page */}
           <Route path="/admin/auth" element={<AuthPage />} />
           {/* Redirect /admin to /admin/auth */}
@@ -53,7 +54,7 @@ function App() {
             <Route path="content/programmes" element={<ProgrammesPage />} />
             <Route path="content/documents" element={<DocumentsPage />} />
             <Route path="donations" element={<DonationsPage />} />
-            <Route path="volunteers" element={<VolunteersPage />} />
+            <Route path="users" element={<UsersPage />} />
           </Route>
         </Routes>
 
@@ -61,6 +62,14 @@ function App() {
       </main>
     </>
   );
+};
+
+function App() {
+  return (
+    <Router>
+      <AppLayout />
+    </Router>
+  );
 }
 
-export default App
+export default App;
