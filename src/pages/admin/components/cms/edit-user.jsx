@@ -36,7 +36,9 @@ export default function EditUserModal({
       reset();
       setSuccess(true);
       close();
+      console.log("Refreshing user list...");
       refreshUserList();
+      console.log("User list refreshed successfully!"); t();
     } catch (error) {
       // console.log(error);
       setError(error.response.data.message);

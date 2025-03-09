@@ -12,6 +12,7 @@ import HomePage from "./pages/home/home.jsx";
 import Volunteer from "./pages/volunteer/volunteer";
 import Contact from "./pages/external/contact/contact.jsx";
 import Footer from "./components/Footer";
+// Import CMS components
 import CmsLayout from "./pages/admin/cms";
 import Dashboard from "./pages/admin/pages/dashboard/page";
 import NewsPage from "./pages/admin/pages/content/news/page";
@@ -22,6 +23,8 @@ import UsersPage from "./pages/admin/pages/users/page.jsx";
 import SignUp from "./pages/login/auth/signup.jsx";
 import HeaderNavbar from "./components/Header.jsx";
 import BackToTopButton from "./components/bot_2_top.jsx";
+import SupportUs from "./pages/external/support/support.jsx";
+
 import TeamsPage from "./pages/admin/pages/team/page.jsx";
 import AdminSignIn from "./pages/admin/auth/signIn.jsx";
 import AdminSignUp from "./pages/admin/auth/signUp.jsx";
@@ -49,26 +52,11 @@ const AppLayout = () => {
           <Route path="/volunteer" element={<Volunteer />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<AboutPage />} />
+          {/* Auth page */}
 
-          {/* Prevent logged-in admins from accessing login/signup */}
-          <Route
-            path="/admin/signIn"
-            element={
-              <PreventAdminAccess>
-                <AdminSignIn />
-              </PreventAdminAccess>
-            }
-          />
-          <Route
-            path="/admin/signUp"
-            element={
-              <PreventAdminAccess>
-                <AdminSignUp />
-              </PreventAdminAccess>
-            }
-          />
-
-          {/* Redirect /admin to /admin/signIn */}
+          <Route path="/admin/signIn" element={<AdminSignIn />} />
+          <Route path="/admin/signUp" element={<AdminSignUp />} />
+          {/* Redirect /admin to /admin/auth */}
           <Route
             path="/admin"
             element={<Navigate to="/admin/signIn" replace />}

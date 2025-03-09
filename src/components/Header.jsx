@@ -1,5 +1,8 @@
 
 import { useState } from "react"
+import { Link } from "react-router-dom"
+import DonateUs from "../pages/external/donateus/donateUs"
+
 
 export default function HeaderNavbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -24,9 +27,7 @@ export default function HeaderNavbar() {
                         <a href="/" className="text-sm font-medium text-gray-700 hover:text-green-500 transition-colors">
                             Home
                         </a>
-                        <a href="/programmes" className="text-sm font-medium text-gray-700 hover:text-green-500 transition-colors">
-                            Our Programmes
-                        </a>
+
                         <a href="/support" className="text-sm font-medium text-gray-700 hover:text-green-500 transition-colors">
                             Support Us
                         </a>
@@ -41,7 +42,7 @@ export default function HeaderNavbar() {
                     {/* Donate Button */}
                     <div className="hidden md:block">
                         <button className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white font-medium rounded-md transition-colors">
-                            Donate
+                            <Link to='/donateus'>Donate</Link>
                         </button>
                     </div>
 
@@ -49,7 +50,7 @@ export default function HeaderNavbar() {
                     <div className="md:hidden">
                         <button
                             onClick={toggleMenu}
-                            className="p-2 rounded-md text-gray-700 hover:bg-gray-100 focus:outline-none"
+                            className="p-2 rounded-md text-gray-700 hover:bg-green-500 focus:outline-none"
                             aria-expanded={isMenuOpen}
                             aria-label="Toggle menu"
                         >
@@ -80,45 +81,43 @@ export default function HeaderNavbar() {
 
                 {/* Mobile Navigation */}
                 <div className={`md:hidden ${isMenuOpen ? "block" : "hidden"}`}>
-                    <div className="pt-2 pb-4 space-y-1">
+                    <div className="pt-2 pb-4 space-y-1 flex flex-col items-center justify-center ">
                         <a
                             href="/"
-                            className="block py-2 px-3 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+                            className="block py-2 px-3 text-base font-medium text-gray-700 hover:bg-green-500 hover:text-white rounded-md"
                             onClick={() => setIsMenuOpen(false)}
                         >
                             Home
                         </a>
-                        <a
-                            href="/programmes"
-                            className="block py-2 px-3 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-md"
-                            onClick={() => setIsMenuOpen(false)}
-                        >
-                            Our Programmes
-                        </a>
+
                         <a
                             href="/support"
-                            className="block py-2 px-3 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+                            className="block py-2 px-3 text-base font-medium text-gray-700 hover:bg-green-500 hover:text-white rounded-md"
                             onClick={() => setIsMenuOpen(false)}
                         >
                             Support Us
                         </a>
                         <a
                             href="/about"
-                            className="block py-2 px-3 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+                            className="block py-2 px-3 text-base font-medium text-gray-700 hover:bg-green-500 hover:text-white rounded-md"
                             onClick={() => setIsMenuOpen(false)}
                         >
                             About Us
                         </a>
                         <a
                             href="/contact"
-                            className="block py-2 px-3 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+                            className="block py-2 px-3 text-base font-medium text-gray-700 hover:bg-green-500 hover:text-white rounded-md"
                             onClick={() => setIsMenuOpen(false)}
                         >
                             Contact Us
                         </a>
                         <div className="pt-2">
                             <button className="w-full px-4 py-2 bg-green-600 hover:bg-green-500 text-white font-medium rounded-md transition-colors">
-                                Donate
+
+                                <Link to='/donateus' >
+                                    Donate
+                                </Link>
+
                             </button>
                         </div>
                     </div>
