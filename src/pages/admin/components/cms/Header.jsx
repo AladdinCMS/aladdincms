@@ -36,27 +36,8 @@ const AdminHeader = () => {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link
-              to="/admin/dashboard"
-              className="text-sm font-medium text-white hover:text-green-200 transition-colors"
-            >
-              Dashboard
-            </Link>
-            <Link
-              to="/admin/users"
-              className="text-sm font-medium text-white hover:text-green-200 transition-colors"
-            >
-              Users
-            </Link>
-            <Link
-              to="/admin/teams"
-              className="text-sm font-medium text-white hover:text-green-200 transition-colors"
-            >
-              Team Members
-            </Link>
-          </nav>
+          {/* Spacer to push the profile to the right */}
+          <div className="flex-grow"></div>
 
           {/* User Profile & Logout */}
           <div className="flex items-center">
