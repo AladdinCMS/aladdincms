@@ -23,6 +23,7 @@ import DonationsPage from "./pages/admin/pages/donations/page";
 import UsersPage from "./pages/admin/pages/users/page.jsx";
 import SignUp from "./pages/login/auth/signup.jsx";
 import HeaderNavbar from "./components/Header.jsx";
+import BackToTopButton from "./components/bot_2_top.jsx";
 
 // Layout wrapper component to conditionally render header and footer
 const AppLayout = () => {
@@ -33,7 +34,7 @@ const AppLayout = () => {
       <main>
         {!isAdminPath && <HeaderNavbar />}
         {!isAdminPath && <div className="pt-17"></div>}
-
+        <BackToTopButton/>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/signup" element={<SignUp />} />
