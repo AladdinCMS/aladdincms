@@ -13,7 +13,6 @@ import Volunteer from "./pages/volunteer/volunteer";
 import Contact from "./pages/external/contact/contact.jsx";
 import Footer from "./components/Footer";
 // Import CMS components
-import AuthPage from "./pages/admin/auth/page";
 import CmsLayout from "./pages/admin/cms";
 import Dashboard from "./pages/admin/pages/dashboard/page";
 import NewsPage from "./pages/admin/pages/content/news/page";
@@ -23,7 +22,10 @@ import DonationsPage from "./pages/admin/pages/donations/page";
 import UsersPage from "./pages/admin/pages/users/page.jsx";
 import SignUp from "./pages/login/auth/signup.jsx";
 import HeaderNavbar from "./components/Header.jsx";
+import BackToTopButton from "./components/bot_2_top.jsx";
 import TeamsPage from "./pages/admin/pages/team/page.jsx";
+import AdminSignIn from "./pages/admin/auth/signIn.jsx";
+import AdminSignUp from "./pages/admin/auth/signUp.jsx";
 
 // Layout wrapper component to conditionally render header and footer
 const AppLayout = () => {
@@ -34,7 +36,7 @@ const AppLayout = () => {
       <main>
         {!isAdminPath && <HeaderNavbar />}
         {!isAdminPath && <div className="pt-17"></div>}
-
+        <BackToTopButton />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/signup" element={<SignUp />} />
@@ -42,11 +44,13 @@ const AppLayout = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<AboutPage />} />
           {/* Auth page */}
-          <Route path="/admin/auth" element={<AuthPage />} />
+
+          <Route path="/admin/signIn" element={<AdminSignIn />} />
+          <Route path="/admin/signUp" element={<AdminSignUp />} />
           {/* Redirect /admin to /admin/auth */}
           <Route
             path="/admin"
-            element={<Navigate to="/admin/auth" replace />}
+            element={<Navigate to="/admin/signIn" replace />}
           />
           {/* CMS Routes - Nested under the CMS Layout */}
           <Route path="/admin" element={<CmsLayout />}>
