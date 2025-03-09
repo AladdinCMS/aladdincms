@@ -1,4 +1,4 @@
-
+import emailjs from "@emailjs/browser";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import {
@@ -34,30 +34,48 @@ export default function Contact() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Simulate form submission
-    setFormStatus({
-      submitted: true,
-      success: true,
-      message: "Thank you! Your message has been sent successfully.",
-    });
 
-    // Reset form after submission
-    setTimeout(() => {
-      setFormData({
-        name: "",
-        email: "",
-        subject: "",
-        message: "",
-      });
-      setFormStatus({
-        submitted: false,
-        success: false,
-        message: "",
-      });
-    }, 5000);
+    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
+      alert("Please fill in all fields.");
+      return;
+    }
 
-    console.log("Contact form submitted:", formData);
-    // Here you would typically send the data to your backend
+    const serviceId = "DQH_2025";
+    const templateId = "template_rcb0p87";
+    const publicKey = "WD-DXMDrReChzbabR";
+
+    const templateParams = {
+      from_name: formData.name,
+      from_email: formData.email,
+      subject: formData.subject,
+      message: formData.message,
+    };
+
+    emailjs.send(serviceId, templateId, templateParams, publicKey)
+      .then((response) => {
+        console.log("Email sent successfully!", response);
+        setFormStatus({
+          submitted: true,
+          success: true,
+          message: "Thank you! Your message has been sent successfully.",
+        });
+
+        alert("Email Sent Successfully! ✅");
+
+        setTimeout(() => {
+          setFormStatus({ submitted: false, success: false, message: "" });
+          setFormData({ name: "", email: "", subject: "", message: "" });
+        }, 5000);
+      })
+      .catch((error) => {
+        console.error("Email failed to send:", error);
+        setFormStatus({
+          submitted: true,
+          success: false,
+          message: "Oops! Something went wrong. Please try again later.",
+        });
+        alert("Failed to send email. ❌");
+      });
   };
 
   return (
