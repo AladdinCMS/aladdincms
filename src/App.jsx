@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { SkeletonText } from "@chakra-ui/react";
+
 import {
   BrowserRouter as Router,
   Routes,
@@ -7,6 +9,8 @@ import {
   useLocation,
 } from "react-router-dom";
 import "./App.css";
+
+
 import AboutPage from "./pages/about/AboutPage";
 import HomePage from "./pages/home/home.jsx";
 import Volunteer from "./pages/volunteer/volunteer";
@@ -31,14 +35,46 @@ import AdminSignIn from "./pages/admin/auth/signIn.jsx";
 import AdminSignUp from "./pages/admin/auth/signUp.jsx";
 
 // Layout wrapper component to conditionally render header and footer
+
 const AppLayout = () => {
+
+
+
   const location = useLocation();
   const isAdminPath = location.pathname.startsWith("/admin");
+
+  useEffect(() => {
+    // Set the document title dynamically based on route or condition
+    if (location.pathname === "/") {
+      document.title = "Green Volunteers - Duke of Edinbrugh Volunteering Opportunities"; // Set default title for homepage
+    } else if (location.pathname.startsWith("/admin")) {
+      document.title = "Admin Dashboard - The Green Team"; // Set title for admin paths
+    } else {
+      document.title = "Green Volunteers - Duke of Edinbrugh Volunteering Opportunities"; // Fallback title
+    };
+
+
+    const favicon = document.querySelector("link[rel='icon']");
+
+    if (!favicon) {
+      // If favicon doesn't exist, create and append it to head
+      const newFavicon = document.createElement("link");
+      newFavicon.rel = "icon";
+      newFavicon.type = "image/png";
+      newFavicon.href = "https://i0.wp.com/www.greenteam.org.uk/wp-content/uploads/2020/04/cropped-gt-logo-mark-01.png?fit=32%2C32&ssl=1";
+      document.head.appendChild(newFavicon);
+    } else {
+      // Update existing favicon
+      favicon.href = "https://i0.wp.com/www.greenteam.org.uk/wp-content/uploads/2020/04/cropped-gt-logo-mark-01.png?fit=32%2C32&ssl=1";
+    }
+  }, [location.pathname]);
+
   return (
     <>
-      <main>
+      <main className="overflow-hidden">
+
         {!isAdminPath && <HeaderNavbar />}
-        {!isAdminPath && <div className="pt-17"></div>}
+        {!isAdminPath && <div className="pt-33"></div>}
         <BackToTopButton />
         <Routes>
           <Route path="/" element={<HomePage />} />

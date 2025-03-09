@@ -39,7 +39,7 @@ export default function DonateUs() {
                     </div>
                 </div>
                 <div className="flex-1">
-                    <div className="relative h-[300px] w-full rounded-xl overflow-hidden">
+                    <div className="relative h-[300px] w-full rounded-xl overflow-hidden felx flex-col justify-center" style={{ height: "60%" }}>
                         <img
                             src="https://www.greenteam.org.uk/wp-content/uploads/2020/05/Green-Volunteers-relax-on-tree-1024x385.png"
                             alt="Young people planting trees"
