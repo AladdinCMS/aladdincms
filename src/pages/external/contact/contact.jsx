@@ -1,3 +1,4 @@
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import emailjs from "@emailjs/browser";
 import { Link } from "react-router-dom";
 import { useState } from "react";
@@ -30,6 +31,20 @@ export default function Contact() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Google Maps API Key (replace with your own API key)
+  const googleMapsApiKey = "AIzaSyBRk1Rrt7XExJ0YufMTyrYYu0pT8RLWfK4";
+
+  // Center of the map (example coordinates for Anytown, USA)
+  const mapContainerStyle = {
+    width: "100%",
+    height: "400px",
+  };
+
+  const center = {
+    lat:55.92543270000002,  // Latitude of your location
+    lng:-3.25095369325279, // Longitude of your location
   };
 
   const handleSubmit = (e) => {
@@ -227,22 +242,24 @@ export default function Contact() {
             </div>
 
             {/* Map */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                Our Location
-              </h2>
-              <div className="aspect-w-16  bg-gray-200 rounded-md overflow-hidden">
-                <div className="w-full bg-gray-200 rounded-md flex items-center justify-center">
-                  {/* <MapPin className="h-12 w-12 text-gray-400" />
-                <span className="ml-2 text-gray-500">Map placeholder</span> */}
-
-                  <img src="https://images.pexels.com/photos/108942/pexels-photo-108942.jpeg?auto=compress&cs=tinysrgb&w=600" />
+            <div className="lg:col-span-1 space-y-8">
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                  Our Location
+                </h2>
+                <div className="aspect-w-16 bg-gray-200 rounded-md overflow-hidden">
+                  {/* Google Map */}
+                  <LoadScript googleMapsApiKey={googleMapsApiKey}>
+                    <GoogleMap
+                      mapContainerStyle={mapContainerStyle}
+                      center={center}
+                      zoom={14}
+                    >
+                      <Marker position={center} />
+                    </GoogleMap>
+                  </LoadScript>
                 </div>
               </div>
-              <p className="mt-4 text-sm text-gray-600">
-                Our community center is conveniently located in downtown Anytown,
-                with ample parking and public transportation access.
-              </p>
             </div>
           </div>
 
@@ -403,10 +420,9 @@ export default function Contact() {
                     </h4>
                     <p className="mt-1 text-sm text-gray-600">
                       You can register as a volunteer using our{" "}
-                      <a href="#" className="text-blue-600 hover:underline">
+                      <Link to="/signUp" className="text-blue-600 hover:underline">
                         volunteer registration form
-                      </a>
-                      .
+                      </Link>
                     </p>
                   </div>
                 </div>
