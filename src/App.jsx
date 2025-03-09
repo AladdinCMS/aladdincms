@@ -24,6 +24,7 @@ import VolunteersPage from "./pages/admin/pages/volunteers/page";
 import SignIn from "./pages/login/auth/signin.jsx";
 import SignUp from "./pages/login/auth/signup.jsx";
 import HeaderNavbar from "./components/Header.jsx";
+import BackToTopButton from "./components/bot_2_top.jsx";
 
 // Layout wrapper component to conditionally render header and footer
 const AppLayout = () => {
@@ -61,6 +62,7 @@ const AppLayout = () => {
             <Route path="volunteers" element={<VolunteersPage />} />
           </Route>
         </Routes>
+        <BackToTopButton/>
         {!isAdminPath && <Footer />}
       </main>
     </>
