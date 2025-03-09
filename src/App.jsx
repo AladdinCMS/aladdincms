@@ -18,7 +18,6 @@ import Dashboard from "./pages/admin/pages/dashboard/page";
 import NewsPage from "./pages/admin/pages/content/news/page";
 import ProgrammesPage from "./pages/admin/pages/content/programmes/page";
 import DocumentsPage from "./pages/admin/pages/content/documents/page";
-import DonationsPage from "./pages/admin/pages/donations/page";
 import UsersPage from "./pages/admin/pages/users/page.jsx";
 import SignUp from "./pages/login/auth/signup.jsx";
 import HeaderNavbar from "./components/Header.jsx";
@@ -33,6 +32,7 @@ import {
   AdminProtect,
   PreventAdminAccess,
 } from "./protection/admin-protect.jsx";
+import DonateUs from "./pages/external/donateus/donateUs.jsx";
 
 // Layout wrapper component to conditionally render header and footer
 const AppLayout = () => {
@@ -81,7 +81,6 @@ const AppLayout = () => {
             <Route path="content/news" element={<NewsPage />} />
             <Route path="content/programmes" element={<ProgrammesPage />} />
             <Route path="content/documents" element={<DocumentsPage />} />
-            <Route path="donations" element={<DonationsPage />} />
             <Route path="users" element={<UsersPage />} />
             <Route path="team" element={<TeamsPage />} />
           </Route>
