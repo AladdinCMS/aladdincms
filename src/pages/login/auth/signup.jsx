@@ -1,7 +1,9 @@
+import { Alert } from "@material-tailwind/react";
 import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+import "../auth/auth.css"
 
 const SignUp = () => {
   const {
@@ -11,6 +13,7 @@ const SignUp = () => {
     reset,
   } = useForm();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const onSignUp = async (data) => {
@@ -26,15 +29,17 @@ const SignUp = () => {
       reset();
       navigate("/signin");
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      setError(error.response.data.message);
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
+    <div className="flex items-center justify-center h-screen bg-gray-100 auth-container ">
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-2xl font-semibold text-center">Sign Up</h2>
+        {error && <Alert color="red">{error}</Alert>}
         <form className="mt-4" onSubmit={handleSubmit(onSignUp)}>
           <div className=" relative">
             <label className="block text-gray-700">Full Name</label>
@@ -77,7 +82,7 @@ const SignUp = () => {
               className="w-full p-2 border rounded-lg mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
               {...register("role", { required: true })}
             >
-              <option value="" disabled>
+              <option value="">
                 Select your role
               </option>
               <option value="volunteer">Volunteer</option>
