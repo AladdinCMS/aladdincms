@@ -7,6 +7,7 @@ import {
   useLocation
 } from "react-router-dom";
 import "./App.css";
+import AboutPage from "./pages/about/AboutPage";
 import HomePage from "./pages/home/home.jsx";
 import Volunteer from "./pages/volunteer/volunteer";
 import Contact from "./pages/external/contact/contact.jsx";
@@ -28,17 +29,21 @@ import HeaderNavbar from "./components/Header.jsx";
 const AppLayout = () => {
   const location = useLocation();
   const isAdminPath = location.pathname.startsWith('/admin');
-  
   return (
     <>
       <main>
+     
         {!isAdminPath && <HeaderNavbar />}
+        <div className="pt-17">
+
+        </div>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/volunteer" element={<Volunteer />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<AboutPage />} />
           {/* Auth page */}
           <Route path="/admin/auth" element={<AuthPage />} />
           {/* Redirect /admin to /admin/auth */}

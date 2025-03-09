@@ -1,12 +1,20 @@
 import React from "react";
 import { Link } from "react-router-dom";
-// import SignIn from "../login/auth/signin";
-// import Contact from "../external/page";
-// import HeaderNavbar from "../../components/Header";
+
+import ImageSlider from "../../components/Slider";
 
 const HomePage = () => {
+    const images = ['https://dlaqljgi7pm30.cloudfront.net/attachments/xujquwqc3zvk/78z9smp14tkq/processed/ewe3166ec17e/alt_ratio_16x9_1x_Green_Vols_Teamworking__1_.jpg?v=20230330124017',
+        'https://www.greenteam.org.uk/wp-content/uploads/2022/05/Angels-hero-image-spring.jpg',
+        'https://www.greenteam.org.uk/wp-content/uploads/2021/11/GT_Green-Explorers_20210509_AMP-14-scaled.jpg',
+        'https://www.greenteam.org.uk/wp-content/uploads/2024/08/hero-image-thrive-boy-with-head-wreath-1024x413.jpg',
+        'https://www.greenteam.org.uk/wp-content/uploads/2024/08/hero-image-shoots-1024x373.jpg',
+        'https://i0.wp.com/www.greenteam.org.uk/wp-content/uploads/2024/08/Nature-Play-firelighting.jpeg?resize=400%2C300&ssl=1',
+        'https://www.greenteam.org.uk/wp-content/uploads/2021/11/Outdoor-Cooking-scaled.jpg',
+        'https://www.greenteam.org.uk/wp-content/uploads/2021/04/Green-Wellies_2021_03_15_1600x700-1024x457.jpg'
+    ]
     return (
-        <div className="bg-gray-100 min-h-screen pt-17">
+        <div className="bg-gray-100 min-h-screen">
 
 
             {/* Hero Section */}
@@ -22,21 +30,12 @@ const HomePage = () => {
 
             {/* Features Section */}
             <section className="max-w-6xl mx-auto px-6 py-16">
-                <h3 className="text-3xl font-bold text-center">Our Features</h3>
-                <div className="mt-10 grid md:grid-cols-3 gap-8">
-                    <div className="bg-white p-6 rounded-lg shadow-md text-center">
-                        <h4 className="text-xl font-bold">Fast Performance</h4>
-                        <p className="mt-2 text-gray-600">Optimized for speed and efficiency.</p>
-                    </div>
-                    <div className="bg-white p-6 rounded-lg shadow-md text-center">
-                        <h4 className="text-xl font-bold">Responsive Design</h4>
-                        <p className="mt-2 text-gray-600">Looks great on all devices.</p>
-                    </div>
-                    <div className="bg-white p-6 rounded-lg shadow-md text-center">
-                        <h4 className="text-xl font-bold">Easy to Use</h4>
-                        <p className="mt-2 text-gray-600">Simple and user-friendly interface.</p>
-                    </div>
-                </div>
+                <h3 className="text-3xl font-bold text-center">Our Programs</h3>
+
+                <ImageSlider />
+
+
+
             </section>
 
 
