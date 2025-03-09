@@ -23,6 +23,7 @@ import VolunteersPage from "./pages/admin/pages/volunteers/page";
 import SignIn from "./pages/login/auth/signin.jsx";
 import SignUp from "./pages/login/auth/signup.jsx";
 import HeaderNavbar from "./components/Header.jsx";
+import SupportUs from "./pages/external/support/support.jsx";
 
 // Layout wrapper component to conditionally render header and footer
 const AppLayout = () => {
@@ -33,12 +34,14 @@ const AppLayout = () => {
     <>
       <main>
         {!isAdminPath && <HeaderNavbar />}
+        <div className="pt-17"></div>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/volunteer" element={<Volunteer />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/support" element={<SupportUs />} />
           {/* Auth page */}
           <Route path="/admin/auth" element={<AuthPage />} />
           {/* Redirect /admin to /admin/auth */}
