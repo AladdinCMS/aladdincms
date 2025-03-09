@@ -20,7 +20,7 @@ import NewsPage from "./pages/admin/pages/content/news/page";
 import ProgrammesPage from "./pages/admin/pages/content/programmes/page";
 import DocumentsPage from "./pages/admin/pages/content/documents/page";
 import DonationsPage from "./pages/admin/pages/donations/page";
-import VolunteersPage from "./pages/admin/pages/volunteers/page";
+import UsersPage from "./pages/admin/pages/users/page.jsx";
 import SignIn from "./pages/login/auth/signin.jsx";
 import SignUp from "./pages/login/auth/signup.jsx";
 import HeaderNavbar from "./components/Header.jsx";
@@ -58,7 +58,7 @@ const AppLayout = () => {
             <Route path="content/programmes" element={<ProgrammesPage />} />
             <Route path="content/documents" element={<DocumentsPage />} />
             <Route path="donations" element={<DonationsPage />} />
-            <Route path="volunteers" element={<VolunteersPage />} />
+            <Route path="users" element={<UsersPage />} />
           </Route>
         </Routes>
         {!isAdminPath && <Footer />}

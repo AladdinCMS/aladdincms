@@ -200,7 +200,7 @@ const DonationCharts = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {donations.slice(0, 5).map((donation) => (
+              {donations.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5).map((donation) => (
                 <tr key={donation._id}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{donation.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">£{donation.amount.toLocaleString()}</td>

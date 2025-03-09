@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import DonationCharts from '../../components/cms/DonationCharts'
 import axios from 'axios' // Make sure to install axios
 
 const DonationsPage = () => {
   const [dateRange, setDateRange] = useState('all')
+  const [sortOption, setSortOption] = useState('newest')
   const [selectedDonation, setSelectedDonation] = useState(null)
   const [isViewModalOpen, setIsViewModalOpen] = useState(false)
   const [donations, setDonations] = useState([])
@@ -41,31 +42,45 @@ const DonationsPage = () => {
     fetchData()
   }, [])
 
-  // Filter donations based on date range
-  const filteredDonations = donations.filter(donation => {
-    if (dateRange === 'all') return true
-    
-    const donationDate = new Date(donation.date)
+  // Memoized filtered and sorted donations
+  const filteredAndSortedDonations = useMemo(() => {
     const now = new Date()
     
-    if (dateRange === 'this_month') {
-      return donationDate.getMonth() === now.getMonth() && 
-             donationDate.getFullYear() === now.getFullYear()
-    }
-    
-    if (dateRange === 'last_month') {
-      const lastMonth = now.getMonth() === 0 ? 11 : now.getMonth() - 1
-      const lastMonthYear = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear()
-      return donationDate.getMonth() === lastMonth && 
-             donationDate.getFullYear() === lastMonthYear
-    }
-    
-    if (dateRange === 'this_year') {
-      return donationDate.getFullYear() === now.getFullYear()
-    }
-    
-    return true
-  })
+    // First, filter donations based on date range
+    const filtered = donations.filter(donation => {
+      const donationDate = new Date(donation.date)
+      
+      if (dateRange === 'all') return true
+      
+      if (dateRange === 'this_month') {
+        return donationDate.getMonth() === now.getMonth() && 
+               donationDate.getFullYear() === now.getFullYear()
+      }
+      
+      if (dateRange === 'last_month') {
+        const lastMonth = now.getMonth() === 0 ? 11 : now.getMonth() - 1
+        const lastMonthYear = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear()
+        return donationDate.getMonth() === lastMonth && 
+               donationDate.getFullYear() === lastMonthYear
+      }
+      
+      if (dateRange === 'this_year') {
+        return donationDate.getFullYear() === now.getFullYear()
+      }
+      
+      return true
+    })
+
+    // Then, sort donations
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.date)
+      const dateB = new Date(b.date)
+      
+      return sortOption === 'newest' 
+        ? dateB.getTime() - dateA.getTime() 
+        : dateA.getTime() - dateB.getTime()
+    })
+  }, [donations, dateRange, sortOption])
 
   // Handle viewing a donation
   const handleViewDonation = (donation) => {
@@ -174,6 +189,18 @@ const DonationsPage = () => {
                 <option value="custom">Custom Range</option>
               </select>
             </div>
+            <div>
+              <label htmlFor="sortOption" className="block text-sm font-medium text-gray-700">Sort By</label>
+              <select
+                id="sortOption"
+                className="mt-1 border border-gray-300 rounded-md p-2"
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value)}
+              >
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+              </select>
+            </div>
           </div>
           
           <div>
@@ -207,8 +234,8 @@ const DonationsPage = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {filteredDonations.length > 0 ? (
-              filteredDonations.map((donation) => (
+            {filteredAndSortedDonations.length > 0 ? (
+              filteredAndSortedDonations.map((donation) => (
                 <tr key={donation._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">{donation.name}</div>
