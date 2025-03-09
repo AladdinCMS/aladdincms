@@ -48,7 +48,7 @@ const AppLayout = () => {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/support" element={<SupportUs />} />
           <Route path="/donateus" element={<DonateUs />} />
-          {/* Auth page */}
+          {/* Auth pagee */}
 
           <Route path="/admin/signIn" element={<AdminSignIn />} />
           <Route path="/admin/signUp" element={<AdminSignUp />} />
