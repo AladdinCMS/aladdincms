@@ -34,9 +34,9 @@ export default function VideoLanding() {
                         >
                             Watch the video below created by volunteer videographer, Evelyn Dom, or click on each of the programme boxes to be taken to that page for more information.
                         </p>
-                        <div className="pt-8 opacity-0" style={{ animation: "fadeInUp 0.6s ease-out 0.6s forwards" }}>
+                        <div className="pt-8 opacity-0 pb-30" style={{ animation: "fadeInUp 0.6s ease-out 0.6s forwards" }}>
                             <Button
-                                className="bg-green-500 hover:bg-white text-white hover:text-green-500 rounded-full px-6 py-3 h-auto text-sm md:text-md"
+                                className="bg-green-500 hover:bg-white text-white hover:text-green-500 rounded-full px-6 py-3 h-auto text-sm md:text-md "
                                 onClick={() => {
                                     const videoSection = document.getElementById("video-section");
                                     videoSection?.scrollIntoView({ behavior: "smooth" });

@@ -138,7 +138,7 @@ const AnimatedToast = ({ id, message, type }) => {
     }, [id, removeToast])
 
     useEffect(() => {
-        const timer = setTimeout(handleRemove, 3000)
+        const timer = setTimeout(handleRemove, 8000)
         return () => clearTimeout(timer)
     }, [handleRemove])
 
@@ -257,85 +257,73 @@ const FlowersAndSaintsUI = () => {
     const items = [
         {
             Icon: Flower,
-            title: "Rose",
-            description: "Symbol of love and passion",
-            action: () => addToast("Roses symbolize love and passion", "flower"),
+            title: "Green Volunteers",
+            description: "For those aged 12-18 looking for regular weekend opportunities",
+            action: () => addToast("Opportunities for 12–18-year-olds to help the environment or earn a DofE or John Muir Award through regular weekend activities", "flower"),
         },
         {
             Icon: Cross,
-            title: "St. Francis",
-            description: "Patron saint of animals and nature",
-            action: () => addToast("St. Francis is known for his love of nature", "saint"),
+            title: "Skylarks",
+            description: "Previously Green Angles",
+            action: () => addToast("For girls aged 12-18 who are interested in making friends and having fun whilst making improvements to the natural environment", "saint"),
         },
         {
             Icon: Sun,
-            title: "Sunflower",
-            description: "Symbol of adoration and loyalty",
-            action: () => addToast("Sunflowers always face the sun", "flower"),
+            title: "Green Explorers",
+            description: "For those aged 8-12 who want to get involved in fun outdoor activities",
+            action: () => addToast("For young people aged 8-12 who want to get involved in fun outdoor activities, experience nature and explore amazing wild places", "flower"),
         },
         {
             Icon: Moon,
-            title: "St. Clare",
-            description: "Patron saint of television",
-            action: () => addToast("St. Clare is the patron saint of television", "saint"),
+            title: "Thrive",
+            description: "For young people in S3 and above looking for respite from daily life through outdoor adventure",
+            action: () => addToast("For young people aged 14+ looking for respite from daily life through outdoor adventure, friendships and personal support to enhance mental wellbeing", "saint"),
         },
         {
             Icon: Cloud,
-            title: "Lily",
-            description: "Symbol of purity and refined beauty",
-            action: () => addToast("Lilies represent purity and refined beauty", "flower"),
+            title: "Green Shoots",
+            description: "For S1-S3 pupils keen to grow and develop in a safe and inclusive environment",
+            action: () => addToast("For S1-S3 pupils facing challenges, seeking growth in a supportive and inclusive natural environment.", "flower"),
         },
         {
             Icon: Umbrella,
-            title: "St. Patrick",
-            description: "Patron saint of Ireland",
-            action: () => addToast("St. Patrick is famous for banishing snakes from Ireland", "saint"),
+            title: "Green Schools",
+            description: "Guidance & help to ensure school classes enjoy learning in nature",
+            action: () => addToast("Guidance & help to ensure school classes enjoy learning in nature, with training to support teachers to enhance outdoor experiences", "saint"),
         },
         {
             Icon: Wind,
-            title: "Dandelion",
-            description: "Symbol of wishes and dreams",
-            action: () => addToast("Dandelions are known for granting wishes", "flower"),
+            title: "Nature Play",
+            description: "An opportunity for parents/carers and their pre-school children",
+            action: () => addToast("An opportunity for parents/carers and their pre-school children to learn and enjoy new activities in local green spaces through nature play", "flower"),
         },
-        {
-            Icon: Snowflake,
-            title: "St. Nicholas",
-            description: "Patron saint of children",
-            action: () => addToast("St. Nicholas is the inspiration for Santa Claus", "saint"),
-        },
+
         {
             Icon: Rainbow,
-            title: "Iris",
-            description: "Symbol of hope and wisdom",
-            action: () => addToast("Irises represent hope and wisdom", "flower"),
+            title: "Holiday Activity",
+            description: "For young people aged 8-12 years old",
+            action: () => addToast("For young people aged 8-12 who are looking for new adventures, outdoor games and new friendships over the school holidays", "flower"),
         },
         {
             Icon: Zap,
-            title: "St. Barbara",
-            description: "Patron saint against lightning",
-            action: () => addToast("St. Barbara is invoked against lightning and fire", "saint"),
+            title: "Green Champions",
+            description: "An opportunity for the 'Young at Heart",
+            action: () => addToast("An opportunity for the ‘young at heart’ to do some practical conservation work through employee volunteering or teambuilding.", "saint"),
         },
-        {
-            Icon: Heart,
-            title: "Forget-me-not",
-            description: "Symbol of true love and memories",
-            action: () => addToast("Forget-me-nots symbolize true love and memories", "flower"),
-        },
-        {
-            Icon: Star,
-            title: "St. Dominic",
-            description: "Patron saint of astronomers",
-            action: () => addToast("St. Dominic is often depicted with a star", "saint"),
-        },
+
     ]
 
     return (
-        <div className="flex flex-col items-center justify-center bg-gradient-to-br from-grenn-600 to-green-300 p-8 ">
-            <style>{globalStyles}</style>
-            <h1 className="text-4xl font-bold text-black-500 mb-8 font-figtree">Our Programs</h1>
-            <Carousel items={items} />
-            <ToastContainer />
+        <div className=" pt-16  pb-16">
+
+            <div className="flex flex-col items-center justify-center bg-gradient-to-br from-grenn-600 to-green-300 p-8  ">
+                <style>{globalStyles}</style>
+                <h1 className="text-4xl font-bold text-black-500 mb-8 font-figtree">Our Programs</h1>
+                <Carousel items={items} />
+                <ToastContainer />
+            </div>
         </div>
+
     )
 }
 

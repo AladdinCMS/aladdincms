@@ -17,9 +17,8 @@ export default function HeaderNavbar() {
                 <div className="flex items-center justify-between">
                     {/* Logo/Brand */}
                     <div className="flex-shrink-0">
-                        <a href="/" className="flex items-center">
-                            <span className="text-xl font-bold text-gray-800">The Green Team</span>
-                        </a>
+                        <a href="/"><img src="https://www.greenteam.org.uk/wp-content/uploads/2020/05/gt-logo-landscapex2-01.png" alt="Green Team Logo" width="300" /></a>
+
                     </div>
 
                     {/* Desktop Navigation */}

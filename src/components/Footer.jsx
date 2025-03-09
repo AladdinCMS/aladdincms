@@ -18,7 +18,8 @@ const Footer = () => {
             <ul className="mt-3 space-y-2">
               <li>
                 <Link
-                  href="/"
+                  to='/'
+
                   className="text-white hover:text-white transition"
                 >
                   Home
@@ -26,23 +27,20 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="/about"
+                  to="/about"
+
                   className="text-white hover:text-white transition"
                 >
                   About
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/services"
-                  className="text-white hover:text-white transition"
-                >
-                  Services
-                </Link>
+
               </li>
               <li>
                 <Link
-                  href="/contact"
+                  to="/contact"
+
                   className="text-white hover:text-white transition"
                 >
                   Contact

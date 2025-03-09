@@ -10,7 +10,10 @@ const HomePage = () => {
   return (
     <div className="bg-gray-100 min-h-screen">
       {/* Hero Section */}
-      <header className="text-center py-20 bg-green-500 text-white bg-[url('https://www.greenteam.org.uk/wp-content/uploads/2021/05/GT_Green-Explorers_20210509_AMP-8-scaled-e1637079034745.jpg')] bg-cover bg-center bg-no-repeat">
+      <header
+        className="text-center py-20 bg-green-500 text-white bg-[url('https://www.greenteam.org.uk/wp-content/uploads/2021/05/GT_Green-Explorers_20210509_AMP-8-scaled-e1637079034745.jpg')] bg-cover flex flex-col justify-center bg-center bg-no-repeat "
+        style={{ width: "100vw", height: "60vh" }}
+      >
         <div className="  bg-transparent p-6 rounded-6 mx-10">
           <h2 className="text-4xl font-bold">Welcome to The Green Team</h2>
           <p className="text-lg mt-4">
