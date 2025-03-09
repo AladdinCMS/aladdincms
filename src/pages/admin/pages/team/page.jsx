@@ -1,88 +1,116 @@
-import React, { useState, useMemo } from 'react'
-import TeamMemberEditor from '../../components/cms/TeamMemberEditor'
+import React, { useState, useMemo, useEffect } from 'react';
+import TeamMemberEditor from '../../components/cms/TeamMemberEditor';
+import axios from 'axios';
+import AddTeamMemberModal from '../../components/cms/add-team-member';
+import EditTeamMemberModal from '../../components/cms/edit-team-member';
+import DeleteTeamMemberModal from '../../components/cms/delete-team-member';
+import Cookies from 'js-cookie';
 
 const TeamsPage = () => {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [filterRole, setFilterRole] = useState('all')
-  const [sortOption, setSortOption] = useState('newest')
-  const [isEditing, setIsEditing] = useState(false)
-  const [selectedTeamMember, setSelectedTeamMember] = useState(null)
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterRole, setFilterRole] = useState('all');
+  const [sortOption, setSortOption] = useState('newest');
+  const [isEditing, setIsEditing] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  let [isOpen, setIsOpen] = useState(false);
+  const [selectedTeamMember, setSelectedTeamMember] = useState(null);
   
-  // Sample team members data: Todo: Replace with actual data from API
-  const [teamMembers, setTeamMembers] = useState([
-    {
-      id: 1,
-      name: 'Emma Chen',
-      email: 'emma.chen@example.com',
-      phone: '(555) 123-4567',
-      role: 'super_admin',
-      joinDate: '2024-10-15'
-    },
-    {
-      id: 2,
-      name: 'Miguel Rodriguez',
-      email: 'miguel.r@example.com',
-      phone: '(555) 234-5678',
-      role: 'admin',
-      joinDate: '2024-08-22'
-    },
-    {
-      id: 3,
-      name: 'Sarah Johnson',
-      email: 'sarah.j@example.com',
-      phone: '(555) 345-6789',
-      role: 'super_admin',
-      joinDate: '2024-07-10'
-    },
-    {
-      id: 4,
-      name: 'David Kim',
-      email: 'david.kim@example.com',
-      phone: '(555) 456-7890',
-      role: 'admin',
-      joinDate: '2024-10-01'
-    },
-    {
-      id: 5,
-      name: 'Lisa Patel',
-      email: 'lisa.p@example.com',
-      phone: '(555) 567-8901',
-      role: 'admin',
-      joinDate: '2024-09-15'
+  const [teamMembers, setTeamMembers] = useState([]);
+
+  function openAddTeamMemberModal() {
+    setIsOpen(true);
+  }
+
+  function closeAddTeamMemberModal() {
+    setIsOpen(false);
+  }
+
+  function openEditTeamMemberModal(teamMember) {
+    setSelectedTeamMember(teamMember);
+    setIsEditing(true);
+  }
+
+  function closeEditTeamMemberModal() {
+    setIsEditing(false);
+  }
+
+  function openDeleteTeamMemberModal(teamMember) {
+    setSelectedTeamMember(teamMember);
+    setIsDeleting(true);
+  }
+
+  function closeDeleteTeamMemberModal() {
+    setIsDeleting(false);
+  }
+
+  const getTeamMembers = async () => {
+    try {
+      // Get the token from cookies based on role
+      const superAdminToken = Cookies.get('super admin');
+      const adminToken = Cookies.get('admin');
+      const token = superAdminToken || adminToken;
+      
+      if (!token) {
+        console.error("No authentication token found");
+        return;
+      }
+      
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API_URL}/auth/admin/get-all-admins`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      console.log(data);
+      setTeamMembers(data);
+    } catch (error) {
+      console.error("Error fetching team members:", error);
     }
-  ])
+  };
+
+  useEffect(() => {
+    getTeamMembers();
+  }, []);
+
+  const refreshTeamMemberList = async () => {
+    await getTeamMembers();
+  };
 
   // Color scheme for different roles
   const roleColors = {
-    super_admin: {
-      bg: 'bg-red-100',
-      text: 'text-red-800',
-      badge: 'bg-red-100 text-red-800'
-    },
     admin: {
       bg: 'bg-blue-100',
       text: 'text-blue-800',
       badge: 'bg-blue-100 text-blue-800'
+    },
+    'super admin': {
+      bg: 'bg-red-100',
+      text: 'text-red-800',
+      badge: 'bg-red-100 text-red-800'
     }
-  }
+  };
 
   // Memoized filtering and sorting
   const filteredAndSortedTeamMembers = useMemo(() => {
     // First, filter team members
     const filtered = teamMembers.filter(teamMember => {
       const matchesSearch = searchQuery === '' || 
-        teamMember.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        teamMember.email.toLowerCase().includes(searchQuery.toLowerCase())
+        (teamMember.firstName && teamMember.firstName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (teamMember.lastName && teamMember.lastName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (teamMember.email && teamMember.email.toLowerCase().includes(searchQuery.toLowerCase()));
       
-      const matchesRole = filterRole === 'all' || teamMember.role === filterRole
+      const matchesRole = filterRole === 'all' || teamMember.role === filterRole;
       
-      return matchesSearch && matchesRole
+      return matchesSearch && matchesRole;
     });
 
     // Then, sort team members
     return filtered.sort((a, b) => {
-      const dateA = new Date(a.joinDate);
-      const dateB = new Date(b.joinDate);
+      const dateA = new Date(a.createdAt);
+      const dateB = new Date(b.createdAt);
       
       return sortOption === 'newest' 
         ? dateB.getTime() - dateA.getTime() 
@@ -90,69 +118,28 @@ const TeamsPage = () => {
     });
   }, [teamMembers, searchQuery, filterRole, sortOption]);
 
-  const handleEditClick = (teamMember) => {
-    setSelectedTeamMember(teamMember);
-    setIsEditing(true);
-  };
-
-  const handleAddNew = () => {
-    setSelectedTeamMember(null);
-    setIsEditing(true);
-  };
-
-  const handleSave = (teamMemberData) => {
-    if (teamMemberData.id) {
-      // Update existing team member
-      setTeamMembers(teamMembers.map(u => 
-        u.id === teamMemberData.id ? teamMemberData : u
-      ));
-    } else {
-      // Add new team member
-      const newTeamMember = {
-        ...teamMemberData,
-        id: teamMembers.length > 0 ? Math.max(...teamMembers.map(u => u.id)) + 1 : 1
-      };
-      setTeamMembers([...teamMembers, newTeamMember]);
-    }
-    setIsEditing(false);
-    setSelectedTeamMember(null);
-  };
-
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this team member?')) {
-      setTeamMembers(teamMembers.filter(teamMember => teamMember.id !== id));
-    }
-  };
-
-  const handleCancel = () => {
-    setIsEditing(false);
-    setSelectedTeamMember(null);
-  };
-
-  // Show editor when adding/editing
-  if (isEditing) {
-    return (
-      <div>
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">
-            {selectedTeamMember ? 'Edit Team Member' : 'Add New Team Member'}
-          </h1>
-          <p className="text-gray-600">
-            {selectedTeamMember ? 'Update team member information' : 'Create a new team member record'}
-          </p>
-        </div>
-        
-        <TeamMemberEditor 
-          teamMember={selectedTeamMember} 
-          onSave={handleSave} 
-          onCancel={handleCancel} 
-        />
-      </div>
-    );
-  }
-
   return (
     <div>
+      <AddTeamMemberModal
+        open={openAddTeamMemberModal}
+        close={closeAddTeamMemberModal}
+        isOpen={isOpen}
+        refreshTeamMemberList={refreshTeamMemberList}
+      />
+      <EditTeamMemberModal
+        open={openEditTeamMemberModal}
+        close={closeEditTeamMemberModal}
+        isOpen={isEditing}
+        teamMember={selectedTeamMember}
+        refreshTeamMemberList={refreshTeamMemberList}
+      />
+      <DeleteTeamMemberModal
+        open={openDeleteTeamMemberModal}
+        close={closeDeleteTeamMemberModal}
+        isOpen={isDeleting}
+        teamMember={selectedTeamMember}
+        refreshTeamMemberList={refreshTeamMemberList}
+      />
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Team Members</h1>
         <p className="text-gray-600">Manage team member information</p>
@@ -162,7 +149,7 @@ const TeamsPage = () => {
       <div className="mb-6">
         <button 
           className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-          onClick={handleAddNew}
+          onClick={openAddTeamMemberModal}
         >
           Add New Team Member
         </button>
@@ -192,7 +179,7 @@ const TeamsPage = () => {
               onChange={(e) => setFilterRole(e.target.value)}
             >
               <option value="all">All Roles</option>
-              <option value="super_admin">Super Admin</option>
+              <option value="super admin">Super Admin</option>
               <option value="admin">Admin</option>
             </select>
             <select
@@ -229,39 +216,53 @@ const TeamsPage = () => {
           <tbody className="bg-white divide-y divide-gray-200">
             {filteredAndSortedTeamMembers.length > 0 ? (
               filteredAndSortedTeamMembers.map((teamMember) => (
-                <tr key={teamMember.id} className="hover:bg-gray-50">
+                <tr key={teamMember?._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className={`flex-shrink-0 h-10 w-10 rounded-full ${roleColors[teamMember.role].bg} flex items-center justify-center`}>
-                        <span className={`${roleColors[teamMember.role].text} font-medium`}>{teamMember.name.charAt(0)}</span>
+                      <div className={`flex-shrink-0 h-10 w-10 rounded-full ${
+                        roleColors[teamMember?.role]?.bg || 'bg-gray-100'
+                      } flex items-center justify-center`}>
+                        <span className={`${
+                          roleColors[teamMember?.role]?.text || 'text-gray-800'
+                        } font-medium`}>
+                          {teamMember?.firstName?.charAt(0) || 'A'}
+                        </span>
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{teamMember.name}</div>
-                        <div className="text-sm text-gray-500">{teamMember.email}</div>
-                        <div className="text-sm text-gray-500">{teamMember.phone}</div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {teamMember?.firstName} {teamMember?.lastName}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {teamMember?.email}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {teamMember?.phoneNumber}
+                        </div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${roleColors[teamMember.role].badge} capitalize`}>
-                      {teamMember.role.replace('_', ' ')}
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                      roleColors[teamMember?.role]?.badge || 'bg-gray-100 text-gray-800'
+                    } capitalize`}>
+                      {teamMember?.role}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="text-sm text-gray-500">
-                      {new Date(teamMember.joinDate).toLocaleDateString()}
+                      {new Date(teamMember?.createdAt).toLocaleDateString()}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button 
                       className="text-blue-600 hover:text-blue-900 mr-3"
-                      onClick={() => handleEditClick(teamMember)}
+                      onClick={() => openEditTeamMemberModal(teamMember)}
                     >
                       Edit
                     </button>
                     <button 
                       className="text-red-600 hover:text-red-900"
-                      onClick={() => handleDelete(teamMember.id)}
+                      onClick={() => openDeleteTeamMemberModal(teamMember)}
                     >
                       Delete
                     </button>
@@ -279,7 +280,7 @@ const TeamsPage = () => {
         </table>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default TeamsPage
+export default TeamsPage;

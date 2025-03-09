@@ -33,6 +33,7 @@ import {
   AdminProtect,
   PreventAdminAccess,
 } from "./protection/admin-protect.jsx";
+import DonateUs from "./pages/external/donateus/donateUs.jsx";
 
 // Layout wrapper component to conditionally render header and footer
 const AppLayout = () => {
