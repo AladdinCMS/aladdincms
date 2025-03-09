@@ -1,56 +1,135 @@
-import React, { useState, useEffect } from 'react'
-import { Upload } from 'lucide-react'
+import React, { useState, useEffect } from "react";
+import { Upload } from "lucide-react";
+import axios from "axios";
 
 const NewsEditor = ({ article, onSave, onCancel, categories = [] }) => {
-  const [formData, setFormData] = useState(article || {
-    title: '',
-    date: new Date().toISOString().split('T')[0],
-    category: '',
-    content: '',
-    image: null
-  });
-  
+  const [formData, setFormData] = useState(
+    article || {
+      title: "",
+      date: new Date().toISOString().split("T")[0],
+      category: "",
+      content: "",
+      image: null,
+    }
+  );
+
   const [imagePreview, setImagePreview] = useState(null);
-  
+  const [imageUploading, setImageUploading] = useState(false);
+
   // Initialize image preview if article has an image
   useEffect(() => {
     if (article && article.image) {
       setImagePreview(article.image);
     }
   }, [article]);
-  
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      setImageUploading(true);
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      // If editing existing article, add the formData to your state
+      // This is just to preview the image, actual upload happens on save
+      setFormData((prevData) => ({
+        ...prevData,
+        imageFile: file,
+        image: URL.createObjectURL(file),
+      }));
+
+      setImageUploading(false);
+    } catch (error) {
+      console.error("Error handling image:", error);
+      setImageUploading(false);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
-  
+
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const imageUrl = URL.createObjectURL(file);
-      
+
       setImagePreview(imageUrl);
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        image: imageUrl
+        image: imageUrl,
+        imageFile: file // Make sure to store the file object for upload
       }));
     }
   };
-  
+
   const handleRemoveImage = () => {
     setImagePreview(null);
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      image: null
+      image: null,
+      imageFile: null
     }));
   };
-  
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave(formData);
+
+    try {
+      const submitData = new FormData();
+
+      // Add all form fields
+      submitData.append("title", formData.title);
+      submitData.append("category", formData.category);
+      submitData.append("content", formData.content);
+      submitData.append("date", formData.date);
+
+      // Add image if we have a new one
+      if (formData.imageFile) {
+        submitData.append("image", formData.imageFile);
+      }
+
+      let result;
+      
+      if (article?._id) {
+        // Update existing article
+        result = await axios.put(
+          `http://localhost:3000/api/v1/news/${article._id}`,
+          submitData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+      } else {
+        // Create new article
+        result = await axios.post(
+          "http://localhost:3000/api/v1/news", 
+          submitData, 
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+      }
+
+      // Pass the result back to the parent component
+      if (onSave) {
+        onSave(result.data.news || formData);
+      }
+    } catch (err) {
+      console.error("Error saving news article:", err);
+      alert("Failed to save news article. Please try again.");
+    }
   };
 
   const handleCancel = () => {
@@ -58,13 +137,18 @@ const NewsEditor = ({ article, onSave, onCancel, categories = [] }) => {
       onCancel();
     }
   };
-  
+
   return (
     <div className="bg-white p-6 rounded-lg shadow">
-      <h2 className="text-xl font-bold mb-6">{article ? 'Edit' : 'Create'} News Article</h2>
+      <h2 className="text-xl font-bold mb-6">
+        {article ? "Edit" : "Create"} News Article
+      </h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="title"
+            className="block text-sm font-medium text-gray-700"
+          >
             Title
           </label>
           <input
@@ -77,9 +161,12 @@ const NewsEditor = ({ article, onSave, onCancel, categories = [] }) => {
             required
           />
         </div>
-        
+
         <div className="mb-4">
-          <label htmlFor="date" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="date"
+            className="block text-sm font-medium text-gray-700"
+          >
             Date
           </label>
           <input
@@ -92,9 +179,12 @@ const NewsEditor = ({ article, onSave, onCancel, categories = [] }) => {
             required
           />
         </div>
-        
+
         <div className="mb-4">
-          <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="category"
+            className="block text-sm font-medium text-gray-700"
+          >
             Category
           </label>
           <select
@@ -108,7 +198,9 @@ const NewsEditor = ({ article, onSave, onCancel, categories = [] }) => {
             <option value="">Select a category</option>
             {categories.length > 0 ? (
               categories.map((category, index) => (
-                <option key={index} value={category}>{category}</option>
+                <option key={index} value={category}>
+                  {category}
+                </option>
               ))
             ) : (
               <>
@@ -133,17 +225,20 @@ const NewsEditor = ({ article, onSave, onCancel, categories = [] }) => {
             )}
           </select>
         </div>
-        
+
         <div className="mb-4">
-          <label htmlFor="featuredImage" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="featuredImage"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Featured Image
           </label>
           <div className="mt-1 flex items-center">
             {imagePreview ? (
               <div className="relative">
-                <img 
-                  src={imagePreview} 
-                  alt="Featured" 
+                <img
+                  src={imagePreview}
+                  alt="Featured"
                   className="h-40 w-auto object-cover rounded-md border border-gray-300"
                 />
                 <button
@@ -151,15 +246,25 @@ const NewsEditor = ({ article, onSave, onCancel, categories = [] }) => {
                   onClick={handleRemoveImage}
                   className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
                 >
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
             ) : (
               <div className="flex items-center">
-                <label 
-                  htmlFor="featuredImage" 
+                <label
+                  htmlFor="featuredImage"
                   className="cursor-pointer flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
                 >
                   <Upload className="h-4 w-4 mr-2" />
@@ -180,9 +285,12 @@ const NewsEditor = ({ article, onSave, onCancel, categories = [] }) => {
             Recommended size: 1200x630 pixels
           </p>
         </div>
-        
+
         <div className="mb-4">
-          <label htmlFor="content" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="content"
+            className="block text-sm font-medium text-gray-700"
+          >
             Content
           </label>
           <textarea
@@ -195,7 +303,7 @@ const NewsEditor = ({ article, onSave, onCancel, categories = [] }) => {
             required
           />
         </div>
-        
+
         <div className="flex justify-end">
           <button
             type="button"
@@ -213,7 +321,7 @@ const NewsEditor = ({ article, onSave, onCancel, categories = [] }) => {
         </div>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default NewsEditor
+export default NewsEditor;

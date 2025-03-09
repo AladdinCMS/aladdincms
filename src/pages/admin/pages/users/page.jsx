@@ -1,0 +1,285 @@
+import React, { useState, useMemo } from 'react'
+import UserEditor from '../../components/cms/UserEditor'
+
+const UsersPage = () => {
+  const [searchQuery, setSearchQuery] = useState('')
+  const [filterRole, setFilterRole] = useState('all')
+  const [sortOption, setSortOption] = useState('newest')
+  const [isEditing, setIsEditing] = useState(false)
+  const [selectedUser, setSelectedUser] = useState(null)
+  
+  // Sample users data : Todo: Replace with actual data from API
+  const [users, setUsers] = useState([
+    {
+      id: 1,
+      name: 'Emma Chen',
+      email: 'emma.chen@example.com',
+      phone: '(555) 123-4567',
+      role: 'volunteer',
+      joinDate: '2024-10-15'
+    },
+    {
+      id: 2,
+      name: 'Miguel Rodriguez',
+      email: 'miguel.r@example.com',
+      phone: '(555) 234-5678',
+      role: 'participant',
+      joinDate: '2024-08-22'
+    },
+    {
+      id: 3,
+      name: 'Sarah Johnson',
+      email: 'sarah.j@example.com',
+      phone: '(555) 345-6789',
+      role: 'volunteer',
+      joinDate: '2024-07-10'
+    },
+    {
+      id: 4,
+      name: 'David Kim',
+      email: 'david.kim@example.com',
+      phone: '(555) 456-7890',
+      role: 'participant',
+      joinDate: '2024-10-01'
+    },
+    {
+      id: 5,
+      name: 'Lisa Patel',
+      email: 'lisa.p@example.com',
+      phone: '(555) 567-8901',
+      role: 'volunteer',
+      joinDate: '2024-09-15'
+    }
+  ])
+
+  // Color scheme for different roles
+  const roleColors = {
+    volunteer: {
+      bg: 'bg-green-100',
+      text: 'text-green-800',
+      badge: 'bg-green-100 text-green-800'
+    },
+    participant: {
+      bg: 'bg-blue-100',
+      text: 'text-blue-800',
+      badge: 'bg-blue-100 text-blue-800'
+    }
+  }
+
+  // Memoized filtering and sorting
+  const filteredAndSortedUsers = useMemo(() => {
+    // First, filter users
+    const filtered = users.filter(user => {
+      const matchesSearch = searchQuery === '' || 
+        user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchQuery.toLowerCase())
+      
+      const matchesRole = filterRole === 'all' || user.role === filterRole
+      
+      return matchesSearch && matchesRole
+    });
+
+    // Then, sort users
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.joinDate);
+      const dateB = new Date(b.joinDate);
+      
+      return sortOption === 'newest' 
+        ? dateB.getTime() - dateA.getTime() 
+        : dateA.getTime() - dateB.getTime();
+    });
+  }, [users, searchQuery, filterRole, sortOption]);
+
+  const handleEditClick = (user) => {
+    setSelectedUser(user);
+    setIsEditing(true);
+  };
+
+  const handleAddNew = () => {
+    setSelectedUser(null);
+    setIsEditing(true);
+  };
+
+  const handleSave = (userData) => {
+    if (userData.id) {
+      // Update existing user
+      setUsers(users.map(u => 
+        u.id === userData.id ? userData : u
+      ));
+    } else {
+      // Add new user
+      const newUser = {
+        ...userData,
+        id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1
+      };
+      setUsers([...users, newUser]);
+    }
+    setIsEditing(false);
+    setSelectedUser(null);
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm('Are you sure you want to delete this user?')) {
+      setUsers(users.filter(user => user.id !== id));
+    }
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setSelectedUser(null);
+  };
+
+  // Show editor when adding/editing
+  if (isEditing) {
+    return (
+      <div>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-900">
+            {selectedUser ? 'Edit User' : 'Add New User'}
+          </h1>
+          <p className="text-gray-600">
+            {selectedUser ? 'Update user information' : 'Create a new user record'}
+          </p>
+        </div>
+        
+        <UserEditor 
+          user={selectedUser} 
+          onSave={handleSave} 
+          onCancel={handleCancel} 
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-900">Users</h1>
+        <p className="text-gray-600">Manage user information</p>
+      </div>
+
+      {/* Actions */}
+      <div className="mb-6">
+        <button 
+          className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+          onClick={handleAddNew}
+        >
+          Add New User
+        </button>
+      </div>
+
+      {/* Search and Filter */}
+      <div className="bg-white p-4 rounded-lg shadow mb-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search users..."
+              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-full md:w-64"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <div className="absolute left-3 top-2.5">
+              <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <select 
+              className="border border-gray-300 rounded-lg px-3 py-2"
+              value={filterRole}
+              onChange={(e) => setFilterRole(e.target.value)}
+            >
+              <option value="all">All Roles</option>
+              <option value="volunteer">Volunteer</option>
+              <option value="participant">Participant</option>
+            </select>
+            <select
+              className="border border-gray-300 rounded-lg px-3 py-2"
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+            >
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Users Table */}
+      <div className="bg-white shadow rounded-lg overflow-hidden">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                User
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Role
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Join Date
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {filteredAndSortedUsers.length > 0 ? (
+              filteredAndSortedUsers.map((user) => (
+                <tr key={user.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className={`flex-shrink-0 h-10 w-10 rounded-full ${roleColors[user.role].bg} flex items-center justify-center`}>
+                        <span className={`${roleColors[user.role].text} font-medium`}>{user.name.charAt(0)}</span>
+                      </div>
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                        <div className="text-sm text-gray-500">{user.email}</div>
+                        <div className="text-sm text-gray-500">{user.phone}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${roleColors[user.role].badge} capitalize`}>
+                      {user.role}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="text-sm text-gray-500">
+                      {new Date(user.joinDate).toLocaleDateString()}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button 
+                      className="text-blue-600 hover:text-blue-900 mr-3"
+                      onClick={() => handleEditClick(user)}
+                    >
+                      Edit
+                    </button>
+                    <button 
+                      className="text-red-600 hover:text-red-900"
+                      onClick={() => handleDelete(user.id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" className="px-6 py-4 text-center text-gray-500">
+                  No users found matching your search criteria.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+export default UsersPage

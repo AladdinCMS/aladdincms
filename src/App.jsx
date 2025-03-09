@@ -4,7 +4,7 @@ import {
   Routes,
   Route,
   Navigate,
-  useLocation
+  useLocation,
 } from "react-router-dom";
 import "./App.css";
 import AboutPage from "./pages/about/AboutPage";
@@ -20,8 +20,8 @@ import NewsPage from "./pages/admin/pages/content/news/page";
 import ProgrammesPage from "./pages/admin/pages/content/programmes/page";
 import DocumentsPage from "./pages/admin/pages/content/documents/page";
 import DonationsPage from "./pages/admin/pages/donations/page";
-import VolunteersPage from "./pages/admin/pages/volunteers/page";
-import SignIn from "./pages/login/auth/signin.jsx";
+import UsersPage from "./pages/admin/pages/users/page.jsx";
+import TeamsPage from "./pages/admin/pages/team/page.jsx";
 import SignUp from "./pages/login/auth/signup.jsx";
 import HeaderNavbar from "./components/Header.jsx";
 import BackToTopButton from "./components/bot_2_top.jsx";
@@ -29,18 +29,14 @@ import BackToTopButton from "./components/bot_2_top.jsx";
 // Layout wrapper component to conditionally render header and footer
 const AppLayout = () => {
   const location = useLocation();
-  const isAdminPath = location.pathname.startsWith('/admin');
+  const isAdminPath = location.pathname.startsWith("/admin");
   return (
     <>
       <main>
-     
         {!isAdminPath && <HeaderNavbar />}
-        <div className="pt-17">
-
-        </div>
+        <div className="pt-17"></div>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/volunteer" element={<Volunteer />} />
           <Route path="/contact" element={<Contact />} />
@@ -59,7 +55,8 @@ const AppLayout = () => {
             <Route path="content/programmes" element={<ProgrammesPage />} />
             <Route path="content/documents" element={<DocumentsPage />} />
             <Route path="donations" element={<DonationsPage />} />
-            <Route path="volunteers" element={<VolunteersPage />} />
+            <Route path="users" element={<UsersPage />} />
+            <Route path="team" element={<TeamsPage />} />
           </Route>
         </Routes>
         <BackToTopButton/>
