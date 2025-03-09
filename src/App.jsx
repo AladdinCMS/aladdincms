@@ -32,7 +32,8 @@ const AppLayout = () => {
     <>
       <main>
         {!isAdminPath && <HeaderNavbar />}
-        <div className="pt-17"></div>
+        {!isAdminPath && <div className="pt-17"></div>}
+
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/signup" element={<SignUp />} />
@@ -56,6 +57,7 @@ const AppLayout = () => {
             <Route path="users" element={<UsersPage />} />
           </Route>
         </Routes>
+
         {!isAdminPath && <Footer />}
       </main>
     </>
