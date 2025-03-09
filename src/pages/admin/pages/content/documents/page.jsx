@@ -1,64 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ContentUploader from "../../../components/cms/ContentUploader";
 import TagEditorModal from "../../../components/cms/TagEditorModal";
+import axios from "axios";
 
 const DocumentsPage = () => {
   const [selectedTags, setSelectedTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isTagEditorOpen, setIsTagEditorOpen] = useState(false);
   const [currentDocument, setCurrentDocument] = useState(null);
+  const [documents, setDocuments] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Sample documents data
-  const documents = [
-    {
-      id: 1,
-      name: "Sustainability Report 2025.pdf",
-      type: "pdf",
-      size: "3.2 MB",
-      uploadedBy: "Emma Chen",
-      uploadDate: "Mar 4, 2025",
-      tags: ["report", "sustainability", "annual"],
-    },
-    {
-      id: 2,
-      name: "Community Garden Guidelines.docx",
-      type: "word",
-      size: "1.8 MB",
-      uploadedBy: "Miguel Rodriguez",
-      uploadDate: "Mar 2, 2025",
-      tags: ["guidelines", "garden", "community"],
-    },
-    {
-      id: 3,
-      name: "Budget Proposal Q2.xlsx",
-      type: "excel",
-      size: "2.4 MB",
-      uploadedBy: "Sarah Johnson",
-      uploadDate: "Feb 28, 2025",
-      tags: ["budget", "finance", "proposal"],
-    },
-    {
-      id: 4,
-      name: "Earth Day Poster.png",
-      type: "image",
-      size: "4.7 MB",
-      uploadedBy: "David Kim",
-      uploadDate: "Feb 25, 2025",
-      tags: ["poster", "event", "marketing"],
-    },
-    {
-      id: 5,
-      name: "Volunteer Handbook.pdf",
-      type: "pdf",
-      size: "5.1 MB",
-      uploadedBy: "Emma Chen",
-      uploadDate: "Feb 20, 2025",
-      tags: ["handbook", "volunteers", "guidelines"],
-    },
-  ];
+  // Fetch documents on component mount
+  useEffect(() => {
+    const fetchDocuments = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get("http://localhost:3000/api/v1/documents");
+        setDocuments(response.data);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching documents:", err);
+        setError("Failed to load documents. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDocuments();
+  }, []);
 
   // All unique tags from documents
-  const allTags = [...new Set(documents.flatMap((doc) => doc.tags))];
+  const allTags = [...new Set(documents.flatMap((doc) => doc.tags || []))];
 
   // Filter documents based on search and selected tags
   const filteredDocuments = documents.filter((doc) => {
@@ -68,7 +42,7 @@ const DocumentsPage = () => {
 
     const matchesTags =
       selectedTags.length === 0 ||
-      selectedTags.every((tag) => doc.tags.includes(tag));
+      selectedTags.every((tag) => doc.tags && doc.tags.includes(tag));
 
     return matchesSearch && matchesTags;
   });
@@ -84,9 +58,42 @@ const DocumentsPage = () => {
     setIsTagEditorOpen(true);
   };
 
-  const handleSaveTags = (updatedDocument) => {
-    console.log("Saving updated tags:", updatedDocument);
-    // Here you would update the document in your database
+  const handleSaveTags = async (updatedDocument) => {
+    try {
+      await axios.patch(
+        `http://localhost:3000/api/v1/documents/${updatedDocument._id}/tags`, 
+        { tags: updatedDocument.tags }
+      );
+      
+      // Update document in state
+      setDocuments(docs => 
+        docs.map(doc => 
+          doc._id === updatedDocument._id ? updatedDocument : doc
+        )
+      );
+      
+      setIsTagEditorOpen(false);
+      setCurrentDocument(null);
+    } catch (err) {
+      console.error("Error updating document tags:", err);
+      alert("Failed to update document tags. Please try again.");
+    }
+  };
+
+  const handleDownload = (document) => {
+    window.location.href = `http://localhost:3000/api/v1/documents/${document._id}/download`;
+  };
+
+  const handleDeleteDocument = async (documentId) => {
+    if (window.confirm("Are you sure you want to delete this document? This action cannot be undone.")) {
+      try {
+        await axios.delete(`http://localhost:3000/api/v1/documents/${documentId}`);
+        setDocuments(docs => docs.filter(doc => doc._id !== documentId));
+      } catch (err) {
+        console.error("Error deleting document:", err);
+        alert("Failed to delete document. Please try again.");
+      }
+    }
   };
 
   const getDocumentIcon = (type) => {
@@ -169,6 +176,24 @@ const DocumentsPage = () => {
     }
   };
 
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-xl text-gray-500">Loading documents...</p>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-xl text-red-500">{error}</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="mb-6">
@@ -178,7 +203,7 @@ const DocumentsPage = () => {
 
       {/* Upload Section */}
       <div className="mb-8">
-        <ContentUploader />
+        <ContentUploader onUploadComplete={(newDoc) => setDocuments([...documents, newDoc])} />
       </div>
 
       {/* Search and Filter */}
@@ -285,58 +310,77 @@ const DocumentsPage = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {filteredDocuments.map((doc) => (
-              <tr key={doc.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    {getDocumentIcon(doc.type)}
-                    <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900">
-                        {doc.name}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        Uploaded by {doc.uploadedBy}
+            {filteredDocuments.length > 0 ? (
+              filteredDocuments.map((doc) => (
+                <tr key={doc._id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      {getDocumentIcon(doc.type)}
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-gray-900">
+                          {doc.name}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          Uploaded by {doc.uploadedBy}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex flex-wrap gap-1">
-                    {doc.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {doc.size}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {doc.uploadDate}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button className="text-green-600 hover:text-green-900 mr-3">
-                    Download
-                  </button>
-                  <button
-                    onClick={() => openTagEditor(doc)}
-                    className="text-blue-600 hover:text-blue-900 mr-3"
-                  >
-                    Edit Tags
-                  </button>
-                  <button className="text-red-600 hover:text-red-900">
-                    Delete
-                  </button>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex flex-wrap gap-1">
+                      {(doc.tags || []).map((tag) => (
+                        <span
+                          key={tag}
+                          className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {doc.size}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {new Date(doc.uploadDate || doc.createdAt).toLocaleDateString('en-US', { 
+                      month: 'short', 
+                      day: 'numeric', 
+                      year: 'numeric' 
+                    })}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button 
+                      className="text-green-600 hover:text-green-900 mr-3"
+                      onClick={() => handleDownload(doc)}
+                    >
+                      Download
+                    </button>
+                    <button
+                      onClick={() => openTagEditor(doc)}
+                      className="text-blue-600 hover:text-blue-900 mr-3"
+                    >
+                      Edit Tags
+                    </button>
+                    <button 
+                      className="text-red-600 hover:text-red-900"
+                      onClick={() => handleDeleteDocument(doc._id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
+                  No documents found matching your search criteria.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
+      
       {/* Tag Editor Modal */}
       {currentDocument && (
         <TagEditorModal

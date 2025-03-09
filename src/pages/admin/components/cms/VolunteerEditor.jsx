@@ -7,8 +7,7 @@ const VolunteerEditor = ({ volunteer, onSave, onCancel }) => {
     phone: '',
     status: 'pending',
     joinDate: new Date().toISOString().split('T')[0],
-    skills: [],
-    hours: 0
+    skills: []
   });
 
   const [skillInput, setSkillInput] = useState('');
@@ -23,8 +22,7 @@ const VolunteerEditor = ({ volunteer, onSave, onCancel }) => {
         phone: volunteer.phone || '',
         status: volunteer.status || 'pending',
         joinDate: volunteer.joinDate || new Date().toISOString().split('T')[0],
-        skills: [...volunteer.skills] || [],
-        hours: volunteer.hours || 0
+        skills: [...volunteer.skills] || []
       });
     }
   }, [volunteer]);
@@ -146,21 +144,6 @@ const VolunteerEditor = ({ volunteer, onSave, onCancel }) => {
               onChange={handleInputChange}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
               required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="hours" className="block text-sm font-medium text-gray-700 mb-1">
-              Hours Logged
-            </label>
-            <input
-              type="number"
-              id="hours"
-              name="hours"
-              value={formData.hours}
-              onChange={handleInputChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-              min="0"
             />
           </div>
         </div>

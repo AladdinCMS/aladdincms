@@ -7,7 +7,7 @@ const VolunteersPage = () => {
   const [isEditing, setIsEditing] = useState(false)
   const [selectedVolunteer, setSelectedVolunteer] = useState(null)
   
-  // Sample volunteers data - now in state so it can be updated
+  // Sample volunteers data - now in state so it can be updated (without hours)
   const [volunteers, setVolunteers] = useState([
     {
       id: 1,
@@ -16,8 +16,7 @@ const VolunteersPage = () => {
       phone: '(555) 123-4567',
       status: 'active',
       joinDate: '2024-10-15',
-      skills: ['Teaching', 'Gardening', 'Social Media'],
-      hours: 45
+      skills: ['Teaching', 'Gardening', 'Social Media']
     },
     {
       id: 2,
@@ -26,8 +25,7 @@ const VolunteersPage = () => {
       phone: '(555) 234-5678',
       status: 'active',
       joinDate: '2024-08-22',
-      skills: ['Event Planning', 'Photography'],
-      hours: 32
+      skills: ['Event Planning', 'Photography']
     },
     {
       id: 3,
@@ -36,8 +34,7 @@ const VolunteersPage = () => {
       phone: '(555) 345-6789',
       status: 'inactive',
       joinDate: '2024-07-10',
-      skills: ['Fundraising', 'Writing', 'Graphic Design'],
-      hours: 28
+      skills: ['Fundraising', 'Writing', 'Graphic Design']
     },
     {
       id: 4,
@@ -46,8 +43,7 @@ const VolunteersPage = () => {
       phone: '(555) 456-7890',
       status: 'pending',
       joinDate: '2024-10-01',
-      skills: ['Web Development', 'Video Editing'],
-      hours: 0
+      skills: ['Web Development', 'Video Editing']
     },
     {
       id: 5,
@@ -56,8 +52,7 @@ const VolunteersPage = () => {
       phone: '(555) 567-8901',
       status: 'active',
       joinDate: '2024-09-15',
-      skills: ['Marketing', 'Public Speaking'],
-      hours: 18
+      skills: ['Marketing', 'Public Speaking']
     }
   ])
 
@@ -220,9 +215,6 @@ const VolunteersPage = () => {
                 Status
               </th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Hours
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -260,9 +252,6 @@ const VolunteersPage = () => {
                       </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {volunteer.hours} hours
-                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button 
                       className="text-blue-600 hover:text-blue-900 mr-3"
@@ -281,7 +270,7 @@ const VolunteersPage = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
+                <td colSpan="4" className="px-6 py-4 text-center text-gray-500">
                   No volunteers found matching your search criteria.
                 </td>
               </tr>
