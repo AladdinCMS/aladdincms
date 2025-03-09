@@ -1,7 +1,7 @@
-import React from 'react'
-import { Outlet } from 'react-router-dom'
-import Header from './components/cms/Header'
-import Sidebar from './components/cms/Sidebar'
+import React from 'react';
+import { Outlet } from 'react-router-dom';
+import Header from './components/cms/Header';
+import Sidebar from './components/cms/Sidebar';
 
 const CmsLayout = () => {
   return (
@@ -14,7 +14,7 @@ const CmsLayout = () => {
         </main>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CmsLayout
+export default CmsLayout;
