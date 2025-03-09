@@ -14,7 +14,7 @@ export default function BackToTopButton() {
 
   const smoothScrollToTop = () => {
     let currentPosition = window.scrollY;
-    const scrollStep = currentPosition / 500; // Adjust for slower scroll
+    const scrollStep = currentPosition / 300; // Adjust for slower scroll
 
     const scroll = () => {
       if (currentPosition > 0) {
