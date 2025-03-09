@@ -1,6 +1,4 @@
-import React, { useEffect } from "react";
-import { SkeletonText } from "@chakra-ui/react";
-
+import React, { useEffect } from "react"; 
 import {
   BrowserRouter as Router,
   Routes,
