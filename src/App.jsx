@@ -19,6 +19,7 @@ import NewsPage from "./pages/admin/pages/content/news/page";
 import ProgrammesPage from "./pages/admin/pages/content/programmes/page";
 import DocumentsPage from "./pages/admin/pages/content/documents/page";
 import UsersPage from "./pages/admin/pages/users/page.jsx";
+import DonationsPage from "./pages/admin/pages/donations/page.jsx";
 import SignUp from "./pages/login/auth/signup.jsx";
 import HeaderNavbar from "./components/Header.jsx";
 import BackToTopButton from "./components/bot_2_top.jsx";
@@ -81,6 +82,7 @@ const AppLayout = () => {
             <Route path="content/news" element={<NewsPage />} />
             <Route path="content/programmes" element={<ProgrammesPage />} />
             <Route path="content/documents" element={<DocumentsPage />} />
+            <Route path="donations" element={<DonationsPage />} />
             <Route path="users" element={<UsersPage />} />
             <Route path="team" element={<TeamsPage />} />
           </Route>

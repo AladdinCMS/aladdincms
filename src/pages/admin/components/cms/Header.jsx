@@ -1,19 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
-
+import { useNavigate } from "react-router-dom";
 const Header = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
+  const [userRole, setUserRole] = useState("Admin User");
+  const navigate = useNavigate();
+  useEffect(() => {
+    // Check for admin or super admin role
+    if (Cookies.get("super admin")) {
+      setUserRole("Super Admin");
+    } else if (Cookies.get("admin")) {
+      setUserRole("Admin");
+    }
+  }, []);
   const handleLogout = () => {
-    // In a real app, you would clear auth tokens/state here
-
+    // Remove both possible admin cookies
     Cookies.remove("admin");
-
-    window.location.reload();
+    Cookies.remove("super admin");
+    // Navigate to login page
+    navigate("/admin/signIn");
   };
-
   return (
-    <header className="bg-green-600 shadow">
+    <header className="bg-green-500 shadow">
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
@@ -30,7 +38,7 @@ const Header = () => {
                 <span className="h-8 w-8 rounded-full bg-green-700 flex items-center justify-center">
                   <span className="text-sm font-medium leading-none">GT</span>
                 </span>
-                <span className="ml-2">Admin User</span>
+                <span className="ml-2">{userRole}</span>
                 <svg
                   className="ml-1 h-5 w-5"
                   xmlns="http://www.w3.org/2000/svg"
@@ -45,7 +53,6 @@ const Header = () => {
                   />
                 </svg>
               </button>
-
               {dropdownOpen && (
                 <div
                   className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
@@ -67,5 +74,4 @@ const Header = () => {
     </header>
   );
 };
-
 export default Header;
