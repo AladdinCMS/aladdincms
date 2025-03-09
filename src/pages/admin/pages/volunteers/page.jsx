@@ -1,11 +1,14 @@
 import React, { useState } from 'react'
+import VolunteerEditor from '../../components/cms/VolunteerEditor'
 
 const VolunteersPage = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
-
-  // Sample volunteers data
-  const volunteers = [
+  const [isEditing, setIsEditing] = useState(false)
+  const [selectedVolunteer, setSelectedVolunteer] = useState(null)
+  
+  // Sample volunteers data - now in state so it can be updated
+  const [volunteers, setVolunteers] = useState([
     {
       id: 1,
       name: 'Emma Chen',
@@ -56,7 +59,10 @@ const VolunteersPage = () => {
       skills: ['Marketing', 'Public Speaking'],
       hours: 18
     }
-  ]
+  ])
+
+  // Get all unique skills for filter dropdown
+  const allSkills = [...new Set(volunteers.flatMap(volunteer => volunteer.skills))].sort();
 
   // Filter volunteers based on search and status
   const filteredVolunteers = volunteers.filter(volunteer => {
@@ -83,6 +89,67 @@ const VolunteersPage = () => {
     }
   }
 
+  const handleEditClick = (volunteer) => {
+    setSelectedVolunteer(volunteer);
+    setIsEditing(true);
+  };
+
+  const handleAddNew = () => {
+    setSelectedVolunteer(null);
+    setIsEditing(true);
+  };
+
+  const handleSave = (volunteerData) => {
+    if (volunteerData.id) {
+      // Update existing volunteer
+      setVolunteers(volunteers.map(v => 
+        v.id === volunteerData.id ? volunteerData : v
+      ));
+    } else {
+      // Add new volunteer
+      const newVolunteer = {
+        ...volunteerData,
+        id: volunteers.length > 0 ? Math.max(...volunteers.map(v => v.id)) + 1 : 1
+      };
+      setVolunteers([...volunteers, newVolunteer]);
+    }
+    setIsEditing(false);
+    setSelectedVolunteer(null);
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm('Are you sure you want to delete this volunteer?')) {
+      setVolunteers(volunteers.filter(volunteer => volunteer.id !== id));
+    }
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setSelectedVolunteer(null);
+  };
+
+  // Show editor when adding/editing
+  if (isEditing) {
+    return (
+      <div>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-900">
+            {selectedVolunteer ? 'Edit Volunteer' : 'Add New Volunteer'}
+          </h1>
+          <p className="text-gray-600">
+            {selectedVolunteer ? 'Update volunteer information' : 'Create a new volunteer record'}
+          </p>
+        </div>
+        
+        <VolunteerEditor 
+          volunteer={selectedVolunteer} 
+          onSave={handleSave} 
+          onCancel={handleCancel} 
+        />
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="mb-6">
@@ -92,7 +159,10 @@ const VolunteersPage = () => {
 
       {/* Actions */}
       <div className="mb-6">
-        <button className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+        <button 
+          className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+          onClick={handleAddNew}
+        >
           Add New Volunteer
         </button>
       </div>
@@ -127,11 +197,9 @@ const VolunteersPage = () => {
             </select>
             <select className="border border-gray-300 rounded-lg px-3 py-2">
               <option>All Skills</option>
-              <option>Teaching</option>
-              <option>Gardening</option>
-              <option>Event Planning</option>
-              <option>Fundraising</option>
-              <option>Marketing</option>
+              {allSkills.map(skill => (
+                <option key={skill} value={skill}>{skill}</option>
+              ))}
             </select>
           </div>
         </div>
@@ -160,47 +228,64 @@ const VolunteersPage = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {filteredVolunteers.map((volunteer) => (
-              <tr key={volunteer.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                      <span className="text-green-800 font-medium">{volunteer.name.charAt(0)}</span>
+            {filteredVolunteers.length > 0 ? (
+              filteredVolunteers.map((volunteer) => (
+                <tr key={volunteer.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                        <span className="text-green-800 font-medium">{volunteer.name.charAt(0)}</span>
+                      </div>
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-gray-900">{volunteer.name}</div>
+                        <div className="text-sm text-gray-500">{volunteer.email}</div>
+                        <div className="text-sm text-gray-500">{volunteer.phone}</div>
+                      </div>
                     </div>
-                    <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900">{volunteer.name}</div>
-                      <div className="text-sm text-gray-500">{volunteer.email}</div>
-                      <div className="text-sm text-gray-500">{volunteer.phone}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-wrap gap-1">
+                      {volunteer.skills.map(skill => (
+                        <span key={skill} className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                          {skill}
+                        </span>
+                      ))}
                     </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex flex-wrap gap-1">
-                    {volunteer.skills.map(skill => (
-                      <span key={skill} className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                        {skill}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      {getStatusBadge(volunteer.status)}
+                      <span className="ml-2 text-sm text-gray-500">
+                        Since {new Date(volunteer.joinDate).toLocaleDateString()}
                       </span>
-                    ))}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    {getStatusBadge(volunteer.status)}
-                    <span className="ml-2 text-sm text-gray-500">
-                      Since {new Date(volunteer.joinDate).toLocaleDateString()}
-                    </span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {volunteer.hours} hours
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button className="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
-                  <button className="text-green-600 hover:text-green-900 mr-3">Log Hours</button>
-                  <button className="text-red-600 hover:text-red-900">Delete</button>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {volunteer.hours} hours
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button 
+                      className="text-blue-600 hover:text-blue-900 mr-3"
+                      onClick={() => handleEditClick(volunteer)}
+                    >
+                      Edit
+                    </button>
+                    <button 
+                      className="text-red-600 hover:text-red-900"
+                      onClick={() => handleDelete(volunteer.id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
+                  No volunteers found matching your search criteria.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>

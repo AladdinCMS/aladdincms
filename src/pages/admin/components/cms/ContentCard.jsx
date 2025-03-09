@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ContentCard = ({ title, type, lastModified, category, details }) => {
+const ContentCard = ({ title, type, lastModified, category, details, image, onDelete, onEdit }) => {
   // Enhanced icon mapping for content types
   const getIcon = () => {
     switch (type) {
@@ -25,30 +25,63 @@ const ContentCard = ({ title, type, lastModified, category, details }) => {
     }
   }
 
+  const handleEditClick = (e) => {
+    e.stopPropagation();
+    if (onEdit) {
+      onEdit();
+    }
+  };
+
+  const handleDeleteClick = (e) => {
+    e.stopPropagation();
+    if (onDelete) {
+      onDelete();
+    }
+  };
+
   return (
-    <div className="bg-white shadow rounded-lg p-4 hover:shadow-md transition-shadow">
-      <div className="flex items-center">
-        {getIcon()}
-        <div className="ml-3">
-          <h3 className="text-lg font-medium text-gray-900">{title}</h3>
-          {category && <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mr-2">{category}</span>}
-          <p className="text-sm text-gray-500">Last modified: {lastModified}</p>
-        </div>
-      </div>
-      
-      {details && (
-        <div className="mt-2 text-sm text-gray-600">
-          <p className="truncate">{details}</p>
+    <div className="bg-white shadow rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+      {/* Image Section (if an image exists) */}
+      {image && (
+        <div className="w-full h-40 overflow-hidden">
+          <img
+            src={image}
+            alt={title}
+            className="w-full h-full object-cover"
+          />
         </div>
       )}
       
-      <div className="mt-4 flex space-x-2">
-        <button className="text-sm px-3 py-1 bg-green-100 text-green-800 rounded-md hover:bg-green-200">
-          Edit
-        </button>
-        <button className="text-sm px-3 py-1 bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200">
-          Share
-        </button>
+      <div className="p-4">
+        <div className="flex items-center">
+          {getIcon()}
+          <div className="ml-3">
+            <h3 className="text-lg font-medium text-gray-900">{title}</h3>
+            {category && <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mr-2">{category}</span>}
+            <p className="text-sm text-gray-500">Last modified: {lastModified}</p>
+          </div>
+        </div>
+        
+        {details && (
+          <div className="mt-2 text-sm text-gray-600">
+            <p className="line-clamp-2">{details}</p>
+          </div>
+        )}
+        
+        <div className="mt-4 flex space-x-2">
+          <button 
+            className="text-sm px-3 py-1 bg-green-100 text-green-800 rounded-md hover:bg-green-200"
+            onClick={handleEditClick}
+          >
+            Edit
+          </button>
+          <button 
+            className="text-sm px-3 py-1 bg-red-100 text-red-800 rounded-md hover:bg-red-200"
+            onClick={handleDeleteClick}
+          >
+            Delete
+          </button>
+        </div>
       </div>
     </div>
   )

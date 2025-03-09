@@ -1,55 +1,60 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import ImageSlider from "../../components/Slider";
 
+import ImageSlider from "../../components/Slider";
+import Slider from "../../components/ImageSlider";
+import VideoLanding from "../../components/VideoLanding";
 
 
 const HomePage = () => {
-    const images = ['https://dlaqljgi7pm30.cloudfront.net/attachments/xujquwqc3zvk/78z9smp14tkq/processed/ewe3166ec17e/alt_ratio_16x9_1x_Green_Vols_Teamworking__1_.jpg?v=20230330124017',
-        'https://www.greenteam.org.uk/wp-content/uploads/2022/05/Angels-hero-image-spring.jpg',
-        'https://www.greenteam.org.uk/wp-content/uploads/2021/11/GT_Green-Explorers_20210509_AMP-14-scaled.jpg',
-        'https://www.greenteam.org.uk/wp-content/uploads/2024/08/hero-image-thrive-boy-with-head-wreath-1024x413.jpg',
-        'https://www.greenteam.org.uk/wp-content/uploads/2024/08/hero-image-shoots-1024x373.jpg',
-        'https://i0.wp.com/www.greenteam.org.uk/wp-content/uploads/2024/08/Nature-Play-firelighting.jpeg?resize=400%2C300&ssl=1',
-        'https://www.greenteam.org.uk/wp-content/uploads/2021/11/Outdoor-Cooking-scaled.jpg',
-        'https://www.greenteam.org.uk/wp-content/uploads/2021/04/Green-Wellies_2021_03_15_1600x700-1024x457.jpg'
-    ]
+
     return (
         <div className="bg-gray-100 min-h-screen">
 
-
             {/* Hero Section */}
-            <header className="text-center py-20 bg-green-500 text-white">
-                <h2 className="text-4xl font-bold">Welcome to The Green Team</h2>
-                <p className="text-lg mt-4">Environmental Conservation Volunteering For Young People Aged 12-18</p>
+            <header className="text-center py-20 bg-green-500 text-white bg-[url('https://www.greenteam.org.uk/wp-content/uploads/2021/05/GT_Green-Explorers_20210509_AMP-8-scaled-e1637079034745.jpg')] bg-cover bg-center bg-no-repeat">
+                <div className="  bg-transparent p-6 rounded-6 mx-10">
+
+                    <h2 className="text-4xl font-bold">Welcome to The Green Team</h2>
+                    <p className="text-lg mt-4">Environmental Conservation Volunteering For Young People Aged 12-18</p>
+
+                </div>
                 <Link to='/signin'>
-                    <button className="mt-6 px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg shadow-md hover:bg-gray-200 transition">
+                    <button className="mt-6 px-6 py-3 bg-white text-green-500 font-semibold rounded-lg shadow-md hover:bg-green-500 hover:text-white transition">
                         Get Started
                     </button>
                 </Link>
             </header>
 
             {/* Features Section */}
-            console.log('HomePage component rendered');          <section className="max-w-6xl mx-auto px-6 py-16">
-                <h3 className="text-3xl font-bold text-center">Our Programs</h3>
+
+            <section className="max-w-6xl mx-auto px-6 py-16">
+                <h3 className="text-3xl font-bold text-center">Our Programs</h3> </section>
+
+            <section className="max-w-6xl mx-auto px-6 ">
+                <p className="text-xl text-center pb-16">The Green Team has been successfully running programmes of outdoor activities for young people since 1995. Our programmes offer a unique blend of practical conservation tasks, outdoor fun, environmental education and personal development. We work with individuals, school groups and referring partners. There really is something for everybody.</p>
+
+                <div className=" pb-16">
+                    <div className="flex flex-col items-center justify-center min-height-70vh bg-gradient-to-br from-green-0 to-green-300 p-8">
+
+                        <Slider />
+                    </div>
+                </div>
+
+                <p className="text-xl text-center pb-16">Throughout the year we run a range of outdoor programmes for children, young people and adults to take part in. We provide positive enjoyable experiences being active in the outdoors and developing new skills. Programmes take place on different days of the week, cover different age ranges and have different aims.
+
+                    Whether you are looking to plant trees to address climate change, explore local wild places, learn some woodland survival skills, discover more about the nature around you, make friends with a hot chocolate around a fire or just chill in a hammock we have a programme for you.</p>
+
+
+
+                <VideoLanding />
+
 
                 <ImageSlider />
 
 
-                {/* <div className="mt-10 grid md:grid-cols-3 gap-8">
-                    <div className="bg-white p-6 rounded-lg shadow-md text-center">
-                        <h4 className="text-xl font-bold">Fast Performance</h4>
-                        <p className="mt-2 text-gray-600">Optimized for speed and efficiency.</p>
-                    </div>
-                    <div className="bg-white p-6 rounded-lg shadow-md text-center">
-                        <h4 className="text-xl font-bold">Responsive Design</h4>
-                        <p className="mt-2 text-gray-600">Looks great on all devices.</p>
-                    </div>
-                    <div className="bg-white p-6 rounded-lg shadow-md text-center">
-                        <h4 className="text-xl font-bold">Easy to Use</h4>
-                        <p className="mt-2 text-gray-600">Simple and user-friendly interface.</p>
-                    </div>
-                </div> */}
+
+
             </section>
 
 
