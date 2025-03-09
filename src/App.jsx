@@ -21,6 +21,7 @@ import ProgrammesPage from "./pages/admin/pages/content/programmes/page";
 import DocumentsPage from "./pages/admin/pages/content/documents/page";
 import DonationsPage from "./pages/admin/pages/donations/page";
 import UsersPage from "./pages/admin/pages/users/page.jsx";
+import TeamsPage from "./pages/admin/pages/team/page.jsx";
 import SignUp from "./pages/login/auth/signup.jsx";
 import HeaderNavbar from "./components/Header.jsx";
 
@@ -54,6 +55,7 @@ const AppLayout = () => {
             <Route path="content/documents" element={<DocumentsPage />} />
             <Route path="donations" element={<DonationsPage />} />
             <Route path="users" element={<UsersPage />} />
+            <Route path="team" element={<TeamsPage />} />
           </Route>
         </Routes>
         {!isAdminPath && <Footer />}
