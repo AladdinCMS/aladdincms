@@ -1,9 +1,20 @@
-import React, { useState } from 'react'
-import { href, Link, useLocation } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import Cookies from "js-cookie";
 
 const Sidebar = () => {
   const location = useLocation();
   const [expandedItems, setExpandedItems] = useState(['Content']); // Pre-expand Content by default
+  const [userRole, setUserRole] = useState("Admin");
+  
+  useEffect(() => {
+    // Check for admin or super admin role
+    if (Cookies.get("super admin")) {
+      setUserRole("Super Admin");
+    } else if (Cookies.get("admin")) {
+      setUserRole("Admin");
+    }
+  }, []);
   
   const navigation = [
     { 
@@ -60,6 +71,9 @@ const Sidebar = () => {
 
   // Check if an item is expanded
   const isExpanded = (name) => expandedItems.includes(name);
+
+  // Get first letter of role for the avatar
+  const roleInitial = userRole.charAt(0);
 
   return (
     <div className="w-64 bg-white border-r border-gray-200 h-full">
@@ -156,12 +170,15 @@ const Sidebar = () => {
         <div className="flex-shrink-0 pt-4 mt-auto border-t border-gray-200">
           <div className="flex items-center px-3 py-2">
             <div className="flex-shrink-0">
-              <div className="h-8 w-8 rounded-full bg-green-600 flex items-center justify-center text-white font-bold">
-                A
+              <div className={`h-8 w-8 rounded-full ${userRole === "Super Admin" ? "bg-red-600" : "bg-green-600"} flex items-center justify-center text-white font-bold`}>
+                {roleInitial}
               </div>
             </div>
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-700">Admin User</p>
+              <p className="text-sm font-medium text-gray-700">{userRole}</p>
+              {userRole === "Super Admin" && (
+                <p className="text-xs text-gray-500">Full access</p>
+              )}
             </div>
           </div>
         </div>
