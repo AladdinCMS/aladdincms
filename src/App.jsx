@@ -33,6 +33,16 @@ import {
   AdminProtect,
   PreventAdminAccess,
 } from "./protection/admin-protect.jsx";
+import DonateUs from "./pages/external/donateus/donateUs.jsx";
+
+// this is for stripe
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+// import { StripeProvider } from "react-stripe-elements";
+
+const stripePromise = loadStripe(
+  "pk_test_51QhwtjD11tTSXeHkf57S8HNk8ykDXzLiuJ2rIyQQZPsC1YJKvPwokNtswi7OKMMYz44h47xBBIizoNh2pgan3jTE002lFHeN53"
+);
 
 // Layout wrapper component to conditionally render header and footer
 const AppLayout = () => {
@@ -41,51 +51,56 @@ const AppLayout = () => {
 
   return (
     <>
-      <main>
-        {!isAdminPath && <HeaderNavbar />}
-        {!isAdminPath && <div className="pt-17"></div>}
-        <BackToTopButton />
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/volunteer" element={<Volunteer />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/about" element={<AboutPage />} />
-          {/* Auth page */}
+      <Elements stripe={stripePromise}>
+        <main>
+          {!isAdminPath && <HeaderNavbar />}
+          {!isAdminPath && <div className="pt-17"></div>}
+          <BackToTopButton />
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/volunteer" element={<Volunteer />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/about" element={<AboutPage />} />
+            {/* Auth page */}
+            <Route path="/support" element={<SupportUs />} />
+            <Route path="/donateus" element={<DonateUs />} />
+            {/* Auth pagee */}
 
-          <Route path="/admin/signIn" element={<AdminSignIn />} />
-          <Route path="/admin/signUp" element={<AdminSignUp />} />
-          {/* Redirect /admin to /admin/auth */}
-          <Route
-            path="/admin"
-            element={<Navigate to="/admin/signIn" replace />}
-          />
+            <Route path="/admin/signIn" element={<AdminSignIn />} />
+            <Route path="/admin/signUp" element={<AdminSignUp />} />
+            {/* Redirect /admin to /admin/auth */}
+            <Route
+              path="/admin"
+              element={<Navigate to="/admin/signIn" replace />}
+            />
 
-          {/* Protected Admin Routes */}
-          <Route
-            path="/admin"
-            element={
-              <AdminProtect>
-                <CmsLayout />
-              </AdminProtect>
-            }
-          >
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="content/news" element={<NewsPage />} />
-            <Route path="content/programmes" element={<ProgrammesPage />} />
-            <Route path="content/documents" element={<DocumentsPage />} />
-            <Route path="donations" element={<DonationsPage />} />
-            <Route path="users" element={<UsersPage />} />
-            <Route path="team" element={<TeamsPage />} />
-          </Route>
+            {/* Protected Admin Routes */}
+            <Route
+              path="/admin"
+              element={
+                <AdminProtect>
+                  <CmsLayout />
+                </AdminProtect>
+              }
+            >
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="content/news" element={<NewsPage />} />
+              <Route path="content/programmes" element={<ProgrammesPage />} />
+              <Route path="content/documents" element={<DocumentsPage />} />
+              <Route path="donations" element={<DonationsPage />} />
+              <Route path="users" element={<UsersPage />} />
+              <Route path="team" element={<TeamsPage />} />
+            </Route>
 
-          {/* 404 Page */}
-          <Route path="*" element={<PageNotFound />} />
-        </Routes>
+            {/* 404 Page */}
+            <Route path="*" element={<PageNotFound />} />
+          </Routes>
 
-        {!isAdminPath && <Footer />}
-      </main>
+          {!isAdminPath && <Footer />}
+        </main>
+      </Elements>
     </>
   );
 };
