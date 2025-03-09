@@ -43,10 +43,7 @@ const SignUp = () => {
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100 auth-container ">
-      {/* <SuccessModal success={success} setSuccess={setSuccess} /> */}
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
-        {/* <h2 className="text-2xl font-semibold text-center">Sign Up</h2> */}
-
         <h2 className="text-2xl font-bold mb-4 text-center">
           {step === 1 ? " Basic Information" : " Contact Information"}
         </h2>

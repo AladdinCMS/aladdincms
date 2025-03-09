@@ -1,16 +1,46 @@
 import React, { useState, useMemo, useEffect } from "react";
 import UserEditor from "../../components/cms/UserEditor";
 import axios from "axios";
-import MyModal from "../../components/cms/add-me-users";
+import AddUserModal from "../../components/cms/add-users";
+import EditUserModal from "../../components/cms/edit-user";
+import DeleteUserModal from "../../components/cms/delete-user";
 
 const UsersPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterRole, setFilterRole] = useState("all");
   const [sortOption, setSortOption] = useState("newest");
   const [isEditing, setIsEditing] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  let [isOpen, setIsOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
   const [users, setUsers] = useState([]);
+
+  function openAddUserModal() {
+    setIsOpen(true);
+  }
+
+  function closeAddUserModal() {
+    setIsOpen(false);
+  }
+
+  function openEditUserModal(user) {
+    setSelectedUser(user);
+    setIsEditing(true);
+  }
+
+  function closeEditUserModal() {
+    setIsEditing(false);
+  }
+
+  function openDeleteUserModal(user) {
+    setSelectedUser(user);
+    setIsDeleting(true);
+  }
+
+  function closeDeleteUserModal() {
+    setIsDeleting(false);
+  }
 
   const getUsers = async () => {
     try {
@@ -28,6 +58,10 @@ const UsersPage = () => {
   useEffect(() => {
     getUsers();
   }, []);
+
+  const refreshUserList = async () => {
+    await getUsers();
+  };
 
   // Color scheme for different roles
   const roleColors = {
@@ -68,70 +102,33 @@ const UsersPage = () => {
     });
   }, [users, searchQuery, filterRole, sortOption]);
 
-  const handleEditClick = (user) => {
-    setSelectedUser(user);
-    setIsEditing(true);
-  };
-
-  const handleAddNew = () => {
-    setSelectedUser(null);
-    setIsEditing(true);
-  };
-
-  const handleSave = (userData) => {
-    if (userData.id) {
-      // Update existing user
-      setUsers(users.map((u) => (u.id === userData.id ? userData : u)));
-    } else {
-      // Add new user
-      const newUser = {
-        ...userData,
-        id: users.length > 0 ? Math.max(...users.map((u) => u.id)) + 1 : 1,
-      };
-      setUsers([...users, newUser]);
-    }
-    setIsEditing(false);
-    setSelectedUser(null);
-  };
-
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       setUsers(users.filter((user) => user.id !== id));
     }
   };
 
-  const handleCancel = () => {
-    setIsEditing(false);
-    setSelectedUser(null);
-  };
-
-  // Show editor when adding/editing
-  if (isEditing) {
-    return (
-      <div>
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">
-            {selectedUser ? "Edit User" : "Add New User"}
-          </h1>
-          <p className="text-gray-600">
-            {selectedUser
-              ? "Update user information"
-              : "Create a new user record"}
-          </p>
-        </div>
-
-        <UserEditor
-          user={selectedUser}
-          onSave={handleSave}
-          onCancel={handleCancel}
-        />
-      </div>
-    );
-  }
-
   return (
     <div>
-      <MyModal/>
+      <AddUserModal
+        open={openAddUserModal}
+        close={closeAddUserModal}
+        isOpen={isOpen}
+      />
+      <EditUserModal
+        open={openEditUserModal}
+        close={closeEditUserModal}
+        isOpen={isEditing}
+        user={selectedUser}
+        refreshUserList={refreshUserList}
+      />
+      <DeleteUserModal
+        open={openDeleteUserModal}
+        close={closeDeleteUserModal}
+        isOpen={isDeleting}
+        user={selectedUser}
+        refreshUserList={refreshUserList}
+      />
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Users</h1>
         <p className="text-gray-600">Manage user information</p>
@@ -141,7 +138,7 @@ const UsersPage = () => {
       <div className="mb-6">
         <button
           className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-          onClick={handleAddNew}
+          onClick={openAddUserModal}
         >
           Add New User
         </button>
@@ -277,13 +274,13 @@ const UsersPage = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button
                       className="text-blue-600 hover:text-blue-900 mr-3"
-                      onClick={() => handleEditClick(user)}
+                      onClick={() => openEditUserModal(user)}
                     >
                       Edit
                     </button>
                     <button
                       className="text-red-600 hover:text-red-900"
-                      onClick={() => handleDelete(user.id)}
+                      onClick={() => openDeleteUserModal(user)}
                     >
                       Delete
                     </button>
