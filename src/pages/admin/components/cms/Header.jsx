@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-
-const AdminHeader = () => {
+import { useNavigate } from "react-router-dom";
+const Header = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userRole, setUserRole] = useState("Admin User");
   const navigate = useNavigate();
-  
   useEffect(() => {
     // Check for admin or super admin role
     if (Cookies.get("super admin")) {
@@ -15,33 +13,24 @@ const AdminHeader = () => {
       setUserRole("Admin");
     }
   }, []);
-  
   const handleLogout = () => {
     // Remove both possible admin cookies
     Cookies.remove("admin");
     Cookies.remove("super admin");
-    
     // Navigate to login page
     navigate("/admin/signIn");
   };
-  
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 w-full border-b bg-green-600 backdrop-blur-sm shadow-sm">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          {/* Logo/Brand */}
-          <div className="flex-shrink-0">
-            <Link to="/admin/dashboard" className="flex items-center">
-              <span className="text-xl font-bold text-white">The Green Team CMS</span>
-            </Link>
-          </div>
-
-          {/* Spacer to push the profile to the right */}
-          <div className="flex-grow"></div>
-
-          {/* User Profile & Logout */}
+    <header className="bg-green-500 shadow">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <div className="relative">
+            <span className="text-2xl font-bold text-white">
+              The Green Team CMS
+            </span>
+          </div>
+          <div className="flex items-center">
+            <div className="ml-3 relative">
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 className="flex items-center text-sm text-white focus:outline-none"
@@ -49,7 +38,7 @@ const AdminHeader = () => {
                 <span className="h-8 w-8 rounded-full bg-green-700 flex items-center justify-center">
                   <span className="text-sm font-medium leading-none">GT</span>
                 </span>
-                <span className="ml-2 font-medium">{userRole}</span>
+                <span className="ml-2">{userRole}</span>
                 <svg
                   className="ml-1 h-5 w-5"
                   xmlns="http://www.w3.org/2000/svg"
@@ -71,7 +60,7 @@ const AdminHeader = () => {
                 >
                   <button
                     onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-green-50 transition-colors"
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     role="menuitem"
                   >
                     Log out
@@ -80,12 +69,9 @@ const AdminHeader = () => {
               )}
             </div>
           </div>
-
-          {/* Mobile Menu Button - we can add this later if needed */}
         </div>
       </div>
     </header>
   );
 };
-
-export default AdminHeader;
+export default Header;
