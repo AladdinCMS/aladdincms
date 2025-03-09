@@ -23,6 +23,7 @@ import DonationsPage from "./pages/admin/pages/donations/page";
 import UsersPage from "./pages/admin/pages/users/page.jsx";
 import SignUp from "./pages/login/auth/signup.jsx";
 import HeaderNavbar from "./components/Header.jsx";
+import TeamsPage from "./pages/admin/pages/team/page.jsx";
 
 // Layout wrapper component to conditionally render header and footer
 const AppLayout = () => {
@@ -55,6 +56,7 @@ const AppLayout = () => {
             <Route path="content/documents" element={<DocumentsPage />} />
             <Route path="donations" element={<DonationsPage />} />
             <Route path="users" element={<UsersPage />} />
+            <Route path="team" element={<TeamsPage />} />
           </Route>
         </Routes>
 
